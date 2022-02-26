@@ -1,0 +1,14 @@
+- git:
+    uri: https://github.com/q-pup/champ.git
+    local-name: champ
+    version: master
+
+- git:
+    uri: https://github.com/q-pup/champ_teleop.git
+    local-name: champ_teleop
+    version: master
+
+- git:
+    uri: https://github.com/q-pup/champ_setup_assistant.git
+    local-name: champ_setup_assistant
+    version: noetic
