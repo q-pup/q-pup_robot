@@ -19,5 +19,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <depend>roscpp</depend>
+  <depend>python3-cantools-pip</depend>
+  <depend>realtime-tools</depend>
 
 </package>
