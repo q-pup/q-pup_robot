@@ -8,9 +8,9 @@
   <description>Q-PUP</description>
 
   <maintainer email="mtreynolds@uwaterloo.ca">Matt Reynolds</maintainer>
-  <maintainer>Melvin Wang</maintainer>
-  <maintainer>Walter Raftus</maintainer>
-  <maintainer>Dawson Hemphill</maintainer>
+  <maintainer email="melvin.wang@uwaterloo.ca">Melvin Wang</maintainer>
+  <maintainer email="wrraftus@uwaterloo.ca">Walter Raftus</maintainer>
+  <maintainer email="djhemphill@uwaterloo.ca">Dawson Hemphill</maintainer>
 
   <license>MIT</license>
 
