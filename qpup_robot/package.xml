@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>qpup_robot</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>Q-PUP Robot Metapackage</description>
 
   <maintainer email="mtreynolds@uwaterloo.ca">Matt Reynolds</maintainer>
@@ -20,9 +20,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <exec_depend>champ</exec_depend>
-  <exec_depend>champ_teleop</exec_depend>
-  <exec_depend>champ_setup_assistant</exec_depend>
   <exec_depend>qpup_config</exec_depend>
   <exec_depend>qpup_vision</exec_depend>
 
