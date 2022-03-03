@@ -1,7 +1,7 @@
 {
-    "robot_name": "q_pup",
+    "robot_name": "qpup",
     "default_urdf": "True",
-    "urdf_path": "$(find q_pup_config)/urdf/quadruped.urdf",
+    "urdf_path": "$(find qpup_config)/urdf/quadruped.urdf",
     "links": {
         "base": "base_link",
         "left_front": [

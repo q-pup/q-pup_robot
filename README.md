@@ -16,9 +16,9 @@ chmod +x ubuntu20
 
 ```
 cd <workspace>/src
-git clone https://github.com/q-pup/q_pup_robot.git
+git clone https://github.com/q-pup/qpup_robot.git
 
 # Install all dependencies
-rosinstall --catkin . q_pup_robot/q_pup_robot.rosinstall
+rosinstall --catkin . qpup_robot/qpup_robot.rosinstall
 rosdep install --from-paths . --ignore-src -r -y
 ```
