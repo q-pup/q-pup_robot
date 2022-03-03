@@ -6,3 +6,13 @@ find_package(catkin REQUIRED)
 
 # Declare a catkin package
 catkin_package()
+
+
+#############
+## Install ##
+#############
+
+# Install config, launch, map, urdf, & world files
+install(DIRECTORY config launch maps urdf worlds
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
