@@ -20,3 +20,8 @@
     uri: https://github.com/machinekoder/ar_track_alvar.git
     local-name: ar_track_alvar
     version: noetic-devel
+
+- git:
+    uri: https://github.com/stereolabs/zed-ros-wrapper.git
+    local-name: zed-ros-wrapper
+    version: master
