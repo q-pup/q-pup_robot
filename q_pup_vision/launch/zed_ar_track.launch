@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-
 <launch>
     <arg name="camera_name"     default="zed" />
     <arg name="zed_node_name"   default="zed_node" />
