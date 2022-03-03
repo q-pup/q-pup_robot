@@ -24,19 +24,15 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 
 #############
-## Testing ##
-#############
-
-if(CATKIN_ENABLE_TESTING)
-    # Lol testing
-endif()
-
-
-#############
 ## Install ##
 #############
 
 # Install headers
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+# Install launch files
+install(DIRECTORY launch
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
