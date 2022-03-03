@@ -12,3 +12,16 @@
     uri: https://github.com/q-pup/champ_setup_assistant.git
     local-name: champ_setup_assistant
     version: noetic
+
+# Never made noetic releases, only up to melodic :(
+# See https://github.com/ros-perception/ar_track_alvar/issues/82
+- git:
+#    uri: https://github.com/ros-perception/ar_track_alvar.git
+    uri: https://github.com/machinekoder/ar_track_alvar.git
+    local-name: ar_track_alvar
+    version: noetic-devel
+
+- git:
+    uri: https://github.com/stereolabs/zed-ros-wrapper.git
+    local-name: zed-ros-wrapper
+    version: master
