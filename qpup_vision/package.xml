@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>qpup_vision</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>Operator tracking with the ZED camera for Q-PUP</description>
 
   <maintainer email="mtreynolds@uwaterloo.ca">Matt Reynolds</maintainer>
@@ -23,5 +23,6 @@
   <depend>roscpp</depend>
 
   <exec_depend>ar_track_alvar</exec_depend>
+  <exec_depend>rviz</exec_depend>
   <exec_depend>zed_wrapper</exec_depend>
 </package>

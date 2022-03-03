@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>qpup_config</name>
   <version>0.1.0</version>
   <description>Q-PUP Champ Config Package</description>
@@ -11,9 +14,19 @@
 
   <license>MIT</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <exec_depend>roslaunch</exec_depend>
-  <exec_depend>rviz</exec_depend>
-  <exec_depend>champ_base</exec_depend>
+  <url type="website">https://q-pup.github.io</url>
+  <url type="bugtracker">https://github.com/q-pup/qpup_robot/issues</url>
+  <url type="repository">https://github.com/q-pup/qpup_robot</url>
 
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>amcl</exec_depend>
+  <exec_depend>champ_bringup</exec_depend>
+  <exec_depend>champ_gazebo</exec_depend>
+  <exec_depend>champ_navigation</exec_depend>
+  <exec_depend>gmapping</exec_depend>
+  <exec_depend>map_server</exec_depend>
+  <exec_depend>move_base</exec_depend>
+  <exec_depend>rviz</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
 </package>
