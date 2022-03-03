@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>q_pup_vision</name>
+  <version>0.0.0</version>
+  <description>Operator tracking with the ZED camera for Q-PUP</description>
+
+  <maintainer email="mtreynolds@uwaterloo.ca">Matt Reynolds</maintainer>
+  <maintainer>Melvin Wang</maintainer>
+  <maintainer>Walter Raftus</maintainer>
+  <maintainer>Dawson Hemphill</maintainer>
+
+  <license>MIT</license>
+
+  <url type="website">https://q-pup.github.io</url>
+  <url type="bugtracker">https://github.com/q-pup/q_pup_robot/issues</url>
+  <url type="repository">https://github.com/q-pup/q_pup_robot</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+
+  <exec_depend>ar_track_alvar</exec_depend>
+  <!-- <exec_depend>depthimage_to_laserscan</exec_depend> -->
+  <!-- <exec_depend>zed_wrapper</exec_depend> -->
+</package>
