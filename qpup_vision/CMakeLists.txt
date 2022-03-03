@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(q_pup_vision)
+project(qpup_vision)
 
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS

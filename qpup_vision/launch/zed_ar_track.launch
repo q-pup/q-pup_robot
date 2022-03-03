@@ -6,7 +6,7 @@
 
     <group ns="$(arg camera_name)">
          <!-- Pre configured RVIZ -->
-        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find q_pup_vision)/rviz/zed_ar_track.rviz" output="screen"/>
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find qpup_vision)/rviz/zed_ar_track.rviz" output="screen"/>
 
         <!-- ZED Wrapper Node-->
         <include file="$(find zed_wrapper)/launch/include/zed_camera.launch.xml">

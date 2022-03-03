@@ -3,9 +3,9 @@
   href="http://download.ros.org/schema/package_format3.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>q_pup_robot</name>
+  <name>qpup_vision</name>
   <version>0.0.0</version>
-  <description>Q-PUP</description>
+  <description>Operator tracking with the ZED camera for Q-PUP</description>
 
   <maintainer email="mtreynolds@uwaterloo.ca">Matt Reynolds</maintainer>
   <maintainer email="melvin.wang@uwaterloo.ca">Melvin Wang</maintainer>
@@ -15,17 +15,13 @@
   <license>MIT</license>
 
   <url type="website">https://q-pup.github.io</url>
-  <url type="bugtracker">https://github.com/q-pup/q_pup_robot/issues</url>
-  <url type="repository">https://github.com/q-pup/q_pup_robot</url>
+  <url type="bugtracker">https://github.com/q-pup/qpup_robot/issues</url>
+  <url type="repository">https://github.com/q-pup/qpup_robot</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <exec_depend>champ</exec_depend>
-  <exec_depend>champ_teleop</exec_depend>
-  <exec_depend>champ_setup_assistant</exec_depend>
-  <exec_depend>q_pup_vision</exec_depend>
+  <depend>roscpp</depend>
 
-  <export>
-    <metapackage/>
-  </export>
+  <exec_depend>ar_track_alvar</exec_depend>
+  <exec_depend>zed_wrapper</exec_depend>
 </package>
