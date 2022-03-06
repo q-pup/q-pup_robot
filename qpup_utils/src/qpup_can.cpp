@@ -8,16 +8,14 @@ QPUP_CAN::QPUP_CAN(int default_endianness, std::string can_interface_name)
     : logger_(qpup_utils::getLoggerName() + "/can"), can_interface_name_(std::move(can_interface_name)) {
   switch (default_endianness) {
     case __ORDER_LITTLE_ENDIAN__:
+      break;
     case __ORDER_BIG_ENDIAN__:
       // FIXME
       throw std::invalid_argument("__ORDER_BIG_ENDIAN__ is not supported.");
-      break;
     case __ORDER_PDP_ENDIAN__:
       throw std::invalid_argument("__ORDER_PDP_ENDIAN__ is not supported.");
-      break;
     default:
       throw std::invalid_argument("Endianness(" + std::to_string(default_endianness) + ") is not supported.");
-      break;
   }
   default_endianness_ = default_endianness;
   internal_state_ = state::UNCONFIGURED;

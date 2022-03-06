@@ -1,0 +1,3 @@
+<launch>
+  <test test-name="test_odrive_can" pkg="qpup_utils" type="odrive-can-test" time-limit="10.0"/>
+</launch>
