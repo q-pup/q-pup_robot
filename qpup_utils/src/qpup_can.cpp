@@ -161,7 +161,7 @@ std::optional<QPUP_CAN::received_CAN_data> QPUP_CAN::getLatestValue(canid_t msg_
   try {
     return std::optional<received_CAN_data>{*recv_map_.at(msg_id).readFromRT()};
   } catch (const std::out_of_range&) {
-    ROS_WARN_STREAM_NAMED(logger_, "No received data for msg_id: " << msg_id);
+    ROS_WARN_STREAM_NAMED(logger_, "No received data for msg_id: " << std::showbase << std::hex << msg_id);
     return std::nullopt;
   }
 }
@@ -174,7 +174,8 @@ bool QPUP_CAN::writeRTRFrame(canid_t msg_id, uint8_t size) {
   }
 
   if (size > CAN_MAX_DLEN) {
-    ROS_ERROR_STREAM_NAMED(logger_, "Tried to request data of invalid size(" << size << " bytes) to can id " << msg_id);
+    ROS_ERROR_STREAM_NAMED(logger_, "Tried to request data of invalid size(" << size << " bytes) to can id "
+                                                                             << std::showbase << std::hex << msg_id);
     internal_state_ = state::ERROR;
     return false;
   }
@@ -186,7 +187,8 @@ bool QPUP_CAN::writeRTRFrame(canid_t msg_id, uint8_t size) {
   const int bytes_sent = send(socket_handle_, &frame, sizeof(struct can_frame), 0);
   if (bytes_sent != sizeof(struct can_frame)) {
     ROS_ERROR_STREAM_NAMED(logger_, "Failed to send all " << sizeof(struct can_frame) << " bytes of msg to "
-                                                          << frame.can_id << ". Only sent " << bytes_sent << " bytes.");
+                                                          << std::showbase << std::hex << frame.can_id << ". Only sent "
+                                                          << bytes_sent << " bytes.");
     internal_state_ = state::ERROR;
     return false;
   }
@@ -201,7 +203,8 @@ bool QPUP_CAN::writeFrame(canid_t msg_id, uint8_t* data, uint8_t size) {
   }
 
   if (size > CAN_MAX_DLEN) {
-    ROS_ERROR_STREAM_NAMED(logger_, "Tried to request data of invalid size(" << size << " bytes) to can id " << msg_id);
+    ROS_ERROR_STREAM_NAMED(logger_, "Tried to request data of invalid size(" << size << " bytes) to can id "
+                                                                             << std::showbase << std::hex << msg_id);
     internal_state_ = state::ERROR;
     return false;
   }
@@ -214,7 +217,8 @@ bool QPUP_CAN::writeFrame(canid_t msg_id, uint8_t* data, uint8_t size) {
   const int bytes_sent = send(socket_handle_, &frame, sizeof(struct can_frame), 0);
   if (bytes_sent != sizeof(struct can_frame)) {
     ROS_ERROR_STREAM_NAMED(logger_, "Failed to send all " << sizeof(struct can_frame) << " bytes of msg to "
-                                                          << frame.can_id << ". Only sent " << bytes_sent << " bytes.");
+                                                          << std::showbase << std::hex << frame.can_id << ". Only sent "
+                                                          << bytes_sent << " bytes.");
     internal_state_ = state::ERROR;
     return false;
   }
@@ -227,7 +231,9 @@ void QPUP_CAN::readSocketTask() {
   int bytes_read;
 
   ROS_INFO_STREAM_NAMED(logger_, "CAN Read thread started!");
+
   while (run_read_thread_.test_and_set()) {
+    ROS_ERROR_STREAM_NAMED(logger_, "REEE");
     do {  // Read Until CAN Buffer is emptied
       bytes_read = recv(socket_handle_, &frame, sizeof(struct can_frame), 0);
       if (bytes_read == sizeof(struct can_frame)) {
@@ -236,44 +242,45 @@ void QPUP_CAN::readSocketTask() {
 
         switch (frame.can_id & CAN_ERR_MASK) {
           CASE_ODRIVE_IDS(HEARTBEAT) : {
-            UNPACK_MSG_STRUCT(heartbeat, &data, frame);
+            UNPACK_MSG_STRUCT(heartbeat, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_MOTOR_ERROR) : {
-            UNPACK_MSG_STRUCT(get_motor_error, &data, frame);
+            UNPACK_MSG_STRUCT(get_motor_error, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_ENCODER_ERROR) : {
-            UNPACK_MSG_STRUCT(get_encoder_error, &data, frame);
+            UNPACK_MSG_STRUCT(get_encoder_error, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_SENSORLESS_ERROR) : {
-            UNPACK_MSG_STRUCT(get_sensorless_error, &data, frame);
+            UNPACK_MSG_STRUCT(get_sensorless_error, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_ENCODER_ESTIMATES) : {
-            UNPACK_MSG_STRUCT(get_encoder_estimates, &data, frame);
+            UNPACK_MSG_STRUCT(get_encoder_estimates, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_ENCODER_COUNT) : {
-            UNPACK_MSG_STRUCT(get_encoder_count, &data, frame);
+            UNPACK_MSG_STRUCT(get_encoder_count, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_IQ) : {
-            UNPACK_MSG_STRUCT(get_iq, &data, frame);
+            UNPACK_MSG_STRUCT(get_iq, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_SENSORLESS_ESTIMATES) : {
-            UNPACK_MSG_STRUCT(get_sensorless_estimates, &data, frame);
+            UNPACK_MSG_STRUCT(get_sensorless_estimates, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_VBUS_VOLTAGE) : {
-            UNPACK_MSG_STRUCT(get_vbus_voltage, &data, frame);
+            UNPACK_MSG_STRUCT(get_vbus_voltage, data, frame);
             break;
           }
 
           default:
-            ROS_ERROR_STREAM_NAMED(logger_, "CAN wrapper encountered unhandled CAN ID: " << frame.can_id);
+            ROS_ERROR_STREAM_NAMED(
+                logger_, "CAN wrapper encountered unhandled CAN ID: " << std::showbase << std::hex << frame.can_id);
         }
 
         if (!recv_map_mtx_.try_lock_for(MUTEX_LOCK_TIMEOUT)) {

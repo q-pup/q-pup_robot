@@ -1,31 +1,29 @@
 #include <gtest/gtest.h>
 
 #include "qpup_utils/qpup_can.hpp"
-#include "qpup_can_database.h"
+#include "qpup_generated/qpup_can_generated.h"
 
 TEST(TestSuite, testCase1) {
   qpup_utils::QPUP_CAN can(__BYTE_ORDER__, "can0");
   ASSERT_TRUE(can.configure());
   ASSERT_TRUE(can.activate());
 
-  ASSERT_TRUE(can.writeRTRFrame(QPUP_CAN_DATABASE_AXIS_3_GET_MOTOR_ERROR_FRAME_ID,
-                                sizeof(qpup_can_database_axis_3_get_motor_error_t)));
-  ASSERT_TRUE(can.writeRTRFrame(QPUP_CAN_DATABASE_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID,
-                                sizeof(qpup_can_database_axis_3_get_vbus_voltage_t)));
+  ASSERT_TRUE(can.writeRTRFrame(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID, sizeof(qpup_odrive_get_motor_error_t)));
+  ASSERT_TRUE(can.writeRTRFrame(QPUP_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID, sizeof(qpup_odrive_get_vbus_voltage_t)));
 
-  auto motor_error = can.getLatestValue(QPUP_CAN_DATABASE_AXIS_3_GET_MOTOR_ERROR_FRAME_ID);
-  auto vbus = can.getLatestValue(QPUP_CAN_DATABASE_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID);
+  auto motor_error = can.getLatestValue(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID);
+  auto vbus = can.getLatestValue(QPUP_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID);
 
   while (!motor_error.has_value() || !vbus.has_value()) {
-    motor_error = can.getLatestValue(QPUP_CAN_DATABASE_AXIS_3_GET_MOTOR_ERROR_FRAME_ID);
-    vbus = can.getLatestValue(QPUP_CAN_DATABASE_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID);
+    motor_error = can.getLatestValue(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID);
+    vbus = can.getLatestValue(QPUP_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID);
   }
 
   ASSERT_NE(motor_error, std::nullopt);
   ASSERT_NE(vbus, std::nullopt);
 
-  auto motor_error_message = std::get<qpup_can_database_axis_3_get_motor_error_t>(motor_error.value());
-  auto vbus_message = std::get<qpup_can_database_axis_3_get_vbus_voltage_t>(vbus.value());
+  auto motor_error_message = std::get<qpup_odrive_get_motor_error_t>(motor_error.value());
+  auto vbus_message = std::get<qpup_odrive_get_vbus_voltage_t>(vbus.value());
 
   ROS_INFO_STREAM(vbus_message.vbus_voltage);
   ROS_INFO_STREAM(motor_error_message.motor_error);

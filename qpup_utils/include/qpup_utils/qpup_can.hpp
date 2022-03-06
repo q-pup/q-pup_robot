@@ -14,47 +14,38 @@
 #include <variant>
 #include <vector>
 
-#include "qpup_can_database.h"
+#include "qpup_generated/qpup_can_generated.h"
 #include "realtime_tools/realtime_buffer.h"
 #include "ros/ros.h"
 
 // clang-format off
 #define ODRIVE_RECEIVED_TYPES(NODE_ID)                           \
-  qpup_can_database_axis_##NODE_ID##_heartbeat_t,                \
-  qpup_can_database_axis_##NODE_ID##_get_motor_error_t,          \
-  qpup_can_database_axis_##NODE_ID##_get_encoder_error_t,        \
-  qpup_can_database_axis_##NODE_ID##_get_sensorless_error_t,     \
-  qpup_can_database_axis_##NODE_ID##_get_encoder_estimates_t,    \
-  qpup_can_database_axis_##NODE_ID##_get_encoder_count_t,        \
-  qpup_can_database_axis_##NODE_ID##_get_iq_t,                   \
-  qpup_can_database_axis_##NODE_ID##_get_sensorless_estimates_t, \
-  qpup_can_database_axis_##NODE_ID##_get_vbus_voltage_t
+
 
 // MSG_NAME must be upper case
 #define CASE_ODRIVE_IDS(MSG_NAME)                       \
-  case QPUP_CAN_DATABASE_AXIS_0_##MSG_NAME##_FRAME_ID:  \
-  case QPUP_CAN_DATABASE_AXIS_1_##MSG_NAME##_FRAME_ID:  \
-  case QPUP_CAN_DATABASE_AXIS_2_##MSG_NAME##_FRAME_ID:  \
-  case QPUP_CAN_DATABASE_AXIS_3_##MSG_NAME##_FRAME_ID:  \
-  case QPUP_CAN_DATABASE_AXIS_4_##MSG_NAME##_FRAME_ID:  \
-  case QPUP_CAN_DATABASE_AXIS_5_##MSG_NAME##_FRAME_ID:  \
-  case QPUP_CAN_DATABASE_AXIS_6_##MSG_NAME##_FRAME_ID:  \
-  case QPUP_CAN_DATABASE_AXIS_7_##MSG_NAME##_FRAME_ID:  \
-  case QPUP_CAN_DATABASE_AXIS_8_##MSG_NAME##_FRAME_ID:  \
-  case QPUP_CAN_DATABASE_AXIS_9_##MSG_NAME##_FRAME_ID:  \
-  case QPUP_CAN_DATABASE_AXIS_10_##MSG_NAME##_FRAME_ID: \
-  case QPUP_CAN_DATABASE_AXIS_11_##MSG_NAME##_FRAME_ID
-
+  case QPUP_AXIS_1_##MSG_NAME##_FRAME_ID:  \
+  case QPUP_AXIS_2_##MSG_NAME##_FRAME_ID:  \
+  case QPUP_AXIS_3_##MSG_NAME##_FRAME_ID:  \
+  case QPUP_AXIS_4_##MSG_NAME##_FRAME_ID:  \
+  case QPUP_AXIS_5_##MSG_NAME##_FRAME_ID:  \
+  case QPUP_AXIS_6_##MSG_NAME##_FRAME_ID:  \
+  case QPUP_AXIS_7_##MSG_NAME##_FRAME_ID:  \
+  case QPUP_AXIS_8_##MSG_NAME##_FRAME_ID:  \
+  case QPUP_AXIS_9_##MSG_NAME##_FRAME_ID:  \
+  case QPUP_AXIS_10_##MSG_NAME##_FRAME_ID: \
+  case QPUP_AXIS_11_##MSG_NAME##_FRAME_ID: \
+  case QPUP_AXIS_12_##MSG_NAME##_FRAME_ID
 
 // MSG_NAME must be lower case
-#define UNPACK_MSG_STRUCT(MSG_NAME, DST_PTR, SRC_CAN_FRAME)                                                          \
+#define UNPACK_MSG_STRUCT(MSG_NAME, DATA_VARIANT, SRC_CAN_FRAME)                                                          \
   do {                                                                                                               \
-    if (SRC_CAN_FRAME.can_dlc != sizeof(qpup_can_database_axis_0_##MSG_NAME##_t)) {                                  \
+    if (SRC_CAN_FRAME.can_dlc != sizeof(qpup_odrive_##MSG_NAME##_t)) {                                  \
       ROS_ERROR_STREAM_NAMED(logger_, "Size mismatch between canframe size and requested decoded size");                       \
     }                                                                                                                \
-    if (!qpup_can_database_axis_0_##MSG_NAME##_unpack(std::get_if<qpup_can_database_axis_0_##MSG_NAME##_t>(DST_PTR), \
+    if (!qpup_odrive_##MSG_NAME##_unpack(std::get_if<qpup_odrive_##MSG_NAME##_t>(&DATA_VARIANT), \
                                                       SRC_CAN_FRAME.data, SRC_CAN_FRAME.can_dlc)) {                  \
-      ROS_ERROR_NAMED(logger_, "Failed to unpack message via qpup_can_database_axis_0##MSG_NAME##_unpack()");        \
+      ROS_ERROR_NAMED(logger_, "Failed to unpack message via qpup_odrive_##MSG_NAME##_unpack()");        \
     }                                                                                                                \
   } while (0);
 
@@ -64,10 +55,10 @@ namespace qpup_utils {
 
 class QPUP_CAN {
   using received_CAN_data =
-      std::variant<ODRIVE_RECEIVED_TYPES(0), ODRIVE_RECEIVED_TYPES(1), ODRIVE_RECEIVED_TYPES(2),
-                   ODRIVE_RECEIVED_TYPES(3), ODRIVE_RECEIVED_TYPES(4), ODRIVE_RECEIVED_TYPES(5),
-                   ODRIVE_RECEIVED_TYPES(6), ODRIVE_RECEIVED_TYPES(7), ODRIVE_RECEIVED_TYPES(8),
-                   ODRIVE_RECEIVED_TYPES(9), ODRIVE_RECEIVED_TYPES(10), ODRIVE_RECEIVED_TYPES(11)>;
+      std::variant<qpup_odrive_heartbeat_t, qpup_odrive_get_motor_error_t, qpup_odrive_get_encoder_error_t,
+                   qpup_odrive_get_sensorless_error_t, qpup_odrive_get_encoder_estimates_t,
+                   qpup_odrive_get_encoder_count_t, qpup_odrive_get_iq_t, qpup_odrive_get_sensorless_estimates_t,
+                   qpup_odrive_get_vbus_voltage_t>;
 
  public:
   explicit QPUP_CAN() = delete;

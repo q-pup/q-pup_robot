@@ -42,7 +42,7 @@ add_library(${PROJECT_NAME}
 target_compile_features(${PROJECT_NAME} PUBLIC c_std_11 cxx_std_14)
 
 add_library(qpup-can-gen
-    generated/qpup_can_database.c
+    src/qpup_can_generated.c
     )
 target_compile_features(qpup-can-gen PUBLIC c_std_11 cxx_std_14)
 
@@ -101,5 +101,9 @@ install(DIRECTORY include/${PROJECT_NAME}/
 # Install Scripts
 install(PROGRAMS
     scripts/bringup_can.sh
-    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/scripts
-    )
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+catkin_install_python(PROGRAMS
+    scripts/generate_dbc.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
