@@ -52,6 +52,13 @@ add_library(qpup-can
 target_compile_features(qpup-can PUBLIC c_std_11 cxx_std_17)
 target_link_libraries(qpup-can ${PROJECT_NAME} qpup-can-gen)
 
+# TODO REMOVE:
+add_executable(
+    test-node
+    src/test_node.cpp
+)
+target_link_libraries(test-node qpup-can ${PROJECT_NAME} ${catkin_LIBRARIES})
+
 #############
 ## Testing ##
 #############

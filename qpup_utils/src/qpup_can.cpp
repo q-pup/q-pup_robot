@@ -152,7 +152,7 @@ bool QPUP_CAN::cleanup() {
 }
 
 std::optional<QPUP_CAN::received_CAN_data> QPUP_CAN::getLatestValue(canid_t msg_id) {
-  if (internal_state_ != state::INACTIVE || internal_state_ != state::ACTIVE) {
+  if (internal_state_ != state::INACTIVE && internal_state_ != state::ACTIVE) {
     ROS_ERROR_STREAM_NAMED(logger_, "getLatestValue() called from invalid state: " << internal_state_);
     internal_state_ = state::ERROR;
     return std::nullopt;
@@ -226,16 +226,17 @@ void QPUP_CAN::readSocketTask() {
   struct can_frame frame {};
   int bytes_read;
 
+  ROS_INFO_STREAM_NAMED(logger_, "CAN Read thread started!");
   while (run_read_thread_.test_and_set()) {
     do {  // Read Until CAN Buffer is emptied
       bytes_read = recv(socket_handle_, &frame, sizeof(struct can_frame), 0);
       if (bytes_read == sizeof(struct can_frame)) {
         received_CAN_data data;
+        ROS_ERROR_STREAM_NAMED(logger_, "received_data");
 
         switch (frame.can_id & CAN_ERR_MASK) {
           CASE_ODRIVE_IDS(HEARTBEAT) : {
             UNPACK_MSG_STRUCT(heartbeat, &data, frame);
-            // TODO: this is useless as is. maybe need to wrap with a timestamp
             break;
           }
           CASE_ODRIVE_IDS(GET_MOTOR_ERROR) : {
