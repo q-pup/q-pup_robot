@@ -172,29 +172,9 @@ bool QPUP_CAN::writeRTRFrame(canid_t msg_id, uint8_t size) {
     internal_state_ = state::ERROR;
     return false;
   }
-
-  if (size > CAN_MAX_DLEN) {
-    ROS_ERROR_STREAM_NAMED(logger_, "Tried to request data of invalid size(" << size << " bytes) to can id "
-                                                                             << std::showbase << std::hex << msg_id);
-    internal_state_ = state::ERROR;
-    return false;
-  }
-
-  struct can_frame frame {};
-  frame.can_id = msg_id | CAN_RTR_FLAG;
-  frame.can_dlc = size;
-
-  const int bytes_sent = send(socket_handle_, &frame, sizeof(struct can_frame), 0);
-  if (bytes_sent != sizeof(struct can_frame)) {
-    ROS_ERROR_STREAM_NAMED(logger_, "Failed to send all " << sizeof(struct can_frame) << " bytes of msg to "
-                                                          << std::showbase << std::hex << frame.can_id << ". Only sent "
-                                                          << bytes_sent << " bytes.");
-    internal_state_ = state::ERROR;
-    return false;
-  }
-
-  return true;
+  return QPUP_CAN::writeFrame(msg_id | CAN_RTR_FLAG, nullptr, size);
 }
+
 bool QPUP_CAN::writeFrame(canid_t msg_id, uint8_t* data, uint8_t size) {
   if (internal_state_ != state::ACTIVE) {
     ROS_ERROR_STREAM_NAMED(logger_, "writeRTRFrame() called from invalid state: " << internal_state_);
@@ -203,8 +183,8 @@ bool QPUP_CAN::writeFrame(canid_t msg_id, uint8_t* data, uint8_t size) {
   }
 
   if (size > CAN_MAX_DLEN) {
-    ROS_ERROR_STREAM_NAMED(logger_, "Tried to request data of invalid size(" << size << " bytes) to can id "
-                                                                             << std::showbase << std::hex << msg_id);
+    ROS_ERROR_STREAM_NAMED(logger_, "Tried to write data of invalid size(" << size << " bytes) to can id "
+                                                                           << std::showbase << std::hex << msg_id);
     internal_state_ = state::ERROR;
     return false;
   }
@@ -212,13 +192,16 @@ bool QPUP_CAN::writeFrame(canid_t msg_id, uint8_t* data, uint8_t size) {
   struct can_frame frame {};
   frame.can_id = msg_id;
   frame.can_dlc = size;
-  std::memcpy(frame.data, data, size);
+  if (data != nullptr) {
+    std::memcpy(frame.data, data, size);
+  }
 
   const int bytes_sent = send(socket_handle_, &frame, sizeof(struct can_frame), 0);
   if (bytes_sent != sizeof(struct can_frame)) {
     ROS_ERROR_STREAM_NAMED(logger_, "Failed to send all " << sizeof(struct can_frame) << " bytes of msg to "
                                                           << std::showbase << std::hex << frame.can_id << ". Only sent "
-                                                          << bytes_sent << " bytes.");
+                                                          << std::dec << bytes_sent
+                                                          << " bytes. Error: " << strerror(errno));
     internal_state_ = state::ERROR;
     return false;
   }
