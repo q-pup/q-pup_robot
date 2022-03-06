@@ -355,7 +355,7 @@ def generate_c_code() -> None:
         header_name=filename_h,
         source_name=filename_c,
         fuzzer_source_name=None,
-        floating_point_numbers=True,
+        floating_point_numbers=False,
         bit_fields=False,
     )
 
