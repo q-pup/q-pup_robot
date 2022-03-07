@@ -25,6 +25,8 @@
   <depend>qpup_hw</depend>
   <depend>qpup_utils</depend>
 
-  <exec_depend>rqt_controller_manager</exec_depend>
+  <exec_depend>imu_sensor_controller</exec_depend>
+  <exec_depend>joint_group_position_controller</exec_depend>
+  <exec_depend>joint_state_controller</exec_depend>
 
 </package>
