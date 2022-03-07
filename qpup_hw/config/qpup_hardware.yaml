@@ -1,0 +1,47 @@
+qpup:
+  combined_robot_hw:
+    shared_values:
+      splay_transmission_reduction: &shared_splay_transmission_reduction 40
+      hip_transmission_reduction: &shared_hip_transmission_reduction 40
+      knee_transmission_reduction: &shared_knee_transmission_reduction deg(rad(40 * 63 / 39))
+
+    qpup_base:
+      type: qpup_hw/QPUPHWReal
+
+      joints:
+        - name: lf_hip_joint
+          transmission_reduction: *shared_splay_transmission_reduction
+
+        - name: lf_upper_leg_joint
+          transmission_reduction: *shared_hip_transmission_reduction
+
+        - name: lf_lower_leg_joint
+          transmission_reduction: *shared_knee_transmission_reduction
+
+        - name: rf_hip_joint
+          transmission_reduction: *shared_splay_transmission_reduction
+
+        - name: rf_upper_leg_joint
+          transmission_reduction: *shared_hip_transmission_reduction
+
+        - name: rf_lower_leg_joint
+          transmission_reduction: *shared_knee_transmission_reduction
+
+        - name: lh_hip_joint
+          transmission_reduction: *shared_splay_transmission_reduction
+
+        - name: lh_upper_leg_joint
+          transmission_reduction: *shared_hip_transmission_reduction
+
+        - name: lh_lower_leg_joint
+          transmission_reduction: *shared_knee_transmission_reduction
+
+        - name: rh_hip_joint
+          transmission_reduction: *shared_splay_transmission_reduction
+
+        - name: rh_upper_leg_joint
+          transmission_reduction: *shared_hip_transmission_reduction
+
+        - name: rh_lower_leg_joint
+          transmission_reduction: *shared_knee_transmission_reduction
+

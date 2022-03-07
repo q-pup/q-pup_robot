@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-model
+    href="http://download.ros.org/schema/package_format3.xsd"
+    schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>qpup_utils</name>
+  <version>0.0.0</version>
+  <description>Collection of shared utilities used for qpup</description>
+
+  <maintainer email="melvin.mc.wang@gmail.com">Melvin Wang</maintainer>
+  <maintainer email="mtreynolds@uwaterloo.ca">Matt Reynolds</maintainer>
+  <maintainer email="wrraftus@uwaterloo.ca">Walter Raftus</maintainer>
+  <maintainer email="djhemphill@uwaterloo.ca">Dawson Hemphill</maintainer>
+
+  <license>MIT</license>
+
+  <author email="melvin.mc.wang@gmail.com">Melvin Wang</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+
+</package>
