@@ -5,7 +5,7 @@
 <package format="3">
   <name>qpup_control</name>
   <version>0.0.0</version>
-  <description>Package containing the rover's top-level control loops, launch files and the combined hw node
+  <description>Package containing qpup's top-level control loops, launch files and the combined hw node
   </description>
 
   <maintainer email="melvin.mc.wang@gmail.com">Melvin wang</maintainer>

@@ -46,7 +46,7 @@ void QPUPHW::doSwitch(
       for (const auto &joint_name :
            hardware_interface_resource_list.resources) {
         actuator_joint_commands_[joint_name].type =
-            DrivetrainActuatorJointCommand::Type::NONE;
+            QPUPJointCommand::Type::NONE;
         actuator_joint_commands_[joint_name].joint_data = 0.0;
       }
     }
@@ -59,18 +59,18 @@ void QPUPHW::doSwitch(
         if (claimed.hardware_interface ==
             "hardware_interface::PositionJointInterface") {
           actuator_joint_commands_[joint_name].type =
-              DrivetrainActuatorJointCommand::Type::POSITION;
+              QPUPActuatorJointCommand::Type::POSITION;
           actuator_joint_commands_[joint_name].joint_data =
               actuator_joint_states_[joint_name].joint_position;
         } else if (claimed.hardware_interface ==
                    "hardware_interface::VelocityJointInterface") {
           actuator_joint_commands_[joint_name].type =
-              DrivetrainActuatorJointCommand::Type::VELOCITY;
+              QPUPActuatorJointCommand::Type::VELOCITY;
           actuator_joint_commands_[joint_name].joint_data = 0.0;
         } else if (claimed.hardware_interface ==
                    "hardware_interface::EffortJointInterface") {
           actuator_joint_commands_[joint_name].type =
-              DrivetrainActuatorJointCommand::Type::EFFORT;
+              QPUPActuatorJointCommand::Type::EFFORT;
           actuator_joint_commands_[joint_name].joint_data = 0.0;
         }
       }

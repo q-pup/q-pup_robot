@@ -13,7 +13,7 @@ class QPUPHW : public hardware_interface::RobotHW {
 public:
   explicit QPUPHW() : QPUPHW("QPUPHW"){};
 
-  struct DrivetrainActuatorJointState {
+  struct QPUPActuatorJointState {
     double joint_position;
     double joint_velocity;
     double joint_effort;
@@ -23,7 +23,7 @@ public:
     double actuator_effort;
   };
 
-  struct DrivetrainActuatorJointCommand {
+  struct QPUPActuatorJointCommand {
     enum class Type { NONE, POSITION, VELOCITY, EFFORT };
     Type type;
     double actuator_data;
@@ -49,9 +49,8 @@ protected:
 
   // Joint States and Commands mapped to Joint Names
   std::vector<std::string> joint_names_;
-  std::map<std::string, DrivetrainActuatorJointState> actuator_joint_states_;
-  std::map<std::string, DrivetrainActuatorJointCommand>
-      actuator_joint_commands_;
+  std::map<std::string, QPUPActuatorJointState> actuator_joint_states_;
+  std::map<std::string, QPUPActuatorJointCommand> actuator_joint_commands_;
 
   // Joint Transmissions and Actuator/Joint Data Wrappers
   std::map<std::string, transmission_interface::SimpleTransmission>
@@ -91,21 +90,21 @@ private:
 
 inline std::ostream &
 operator<<(std::ostream &os,
-           QPUPHW::DrivetrainActuatorJointCommand::Type &command_type) {
+           QPUPHW::QPUPActuatorJointCommand::Type &command_type) {
   switch (command_type) {
-  case QPUPHW::DrivetrainActuatorJointCommand::Type::NONE:
+  case QPUPHW::QPUPActuatorJointCommand::Type::NONE:
     os << "None";
     break;
 
-  case QPUPHW::DrivetrainActuatorJointCommand::Type::POSITION:
+  case QPUPHW::QPUPActuatorJointCommand::Type::POSITION:
     os << "Position";
     break;
 
-  case QPUPHW::DrivetrainActuatorJointCommand::Type::VELOCITY:
+  case QPUPHW::QPUPActuatorJointCommand::Type::VELOCITY:
     os << "Velocity";
     break;
 
-  case QPUPHW::DrivetrainActuatorJointCommand::Type::EFFORT:
+  case QPUPHW::QPUPActuatorJointCommand::Type::EFFORT:
     os << "Effort";
     break;
 

@@ -8,8 +8,9 @@
     <rosparam file="$(find qpup_control)/config/qpup_controllers.yaml" command="load"/>
     <rosparam file="$(find qpup_control)/config/qpup_hardware.yaml" command="load"/>
 
-    <rosparam file="$(find qpup_hw)/config/drivetrain_controllers.yaml" command="load"/>
-    <rosparam file="$(find qpup_hw)/config/drivetrain_hardware.yaml" command="load"/>
+    <rosparam file="$(find qpup_hw)/config/qpup_hardware.yaml" command="load"/>
+
+    <rosparam file="$(find qpup_config)/config/ros_control/ros_control.yaml" command="load"/>
 
     <group ns="/qpup/">
         <param name="control_mode" value="$(arg control_mode)"/>
@@ -17,26 +18,21 @@
 
         <!-- list of all the controllers to start initially. This determines what control mode each joint is at startup (ie. vel, pos, etc.).  -->
         <arg name="initial_start_controller_list" value="qpup_joint_state_controller
-                                                         drivetrain_velocity_controller"/>
+                                                         joint_group_position_controller"/>
 
-       <!-- load the intially started controllers used in any configuration-->
+       <!-- load the intially started controllers-->
        <node name="start_controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
              output="screen" args="$(arg initial_start_controller_list)"/>
 
        <!-- list of all other controllers that should be loaded, but not started -->
-       <arg name="load_only_controller_list" value="drivetrain_voltage_controller
-                                                    drivetrain_position_controller"/>
+       <arg name="load_only_controller_list" value=""/>  <!-- TODO -->
 
-       <!-- load all other controllers-->
+       <!-- load all other controllers -->
        <node name="load_controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-            output="screen" args="--stopped $(arg load_only_controller_list)"/>
+            output="screen" args="--stopped $(arg load_only_controller_list)"/> -->
 
        <!-- load robot hw plugins list based on control mode -->
-       <arg name="hardware_list" value="[drivetrain, arm]" if="$(eval control_mode == 'arm_mission')"/>
-       <arg name="hardware_list" value="[drivetrain, science]" if="$(eval control_mode == 'science_mission')"/>
-       <arg name="hardware_list" value="[arm]" if="$(eval control_mode == 'arm_only')"/>
-       <arg name="hardware_list" value="[science]" if="$(eval control_mode == 'science_only')"/>
-       <arg name="hardware_list" value="[drivetrain]" if="$(eval control_mode == 'drivetrain_only')"/>
+       <arg name="hardware_list" value="[qpup_base]"/>
 
        <rosparam param="combined_robot_hw/robot_hardware" subst_value="True">$(arg hardware_list)</rosparam>
 

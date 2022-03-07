@@ -35,21 +35,21 @@ void QPUPHWReal::write(const ros::Time & /*time*/,
   for (const auto &joint_name : joint_names_) {
     bool successful_joint_write = false;
     switch (actuator_joint_commands_[joint_name].type) {
-    case QPUPHW::DrivetrainActuatorJointCommand::Type::POSITION:
+    case QPUPHW::QPUPActuatorJointCommand::Type::POSITION:
       joint_to_actuator_position_interface_.propagate();
       //      successful_joint_write = smth smth
       //      actuator_joint_commands_[joint_name].actuator_data
 
       break;
 
-    case QPUPHW::DrivetrainActuatorJointCommand::Type::VELOCITY:
+    case QPUPHW::QPUPActuatorJointCommand::Type::VELOCITY:
       joint_to_actuator_velocity_interface_.propagate();
       //      successful_joint_write = smth smth
       //      actuator_joint_commands_[joint_name].actuator_data
 
       break;
 
-    case QPUPHW::DrivetrainActuatorJointCommand::Type::EFFORT:
+    case QPUPHW::QPUPActuatorJointCommand::Type::EFFORT:
       joint_to_actuator_velocity_interface_.propagate();
 
       actuator_joint_commands_[joint_name].actuator_data =
@@ -59,7 +59,7 @@ void QPUPHWReal::write(const ros::Time & /*time*/,
       //      actuator_joint_commands_[joint_name].actuator_data
       break;
 
-    case QPUPHW::DrivetrainActuatorJointCommand::Type::NONE:
+    case QPUPHW::QPUPActuatorJointCommand::Type::NONE:
       ROS_DEBUG_STREAM_NAMED(
           name_, joint_name
                      << " has a " << actuator_joint_commands_[joint_name].type
@@ -78,7 +78,7 @@ void QPUPHWReal::write(const ros::Time & /*time*/,
     }
     if (!successful_joint_write &&
         actuator_joint_commands_[joint_name].type !=
-            QPUPHW::DrivetrainActuatorJointCommand::Type::NONE) {
+            QPUPHW::QPUPActuatorJointCommand::Type::NONE) {
       ROS_ERROR_STREAM_NAMED(
           name_, "Failed to write " << actuator_joint_commands_[joint_name].type
                                     << " command to " << joint_name << ".");

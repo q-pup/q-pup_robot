@@ -12,7 +12,7 @@ std::string getLoggerName(ros::NodeHandle &nh) {
     static unsigned int number_of_unnamed_loggers = 0;
     std::string fallback_logger_name{"UNNAMED_LOGGER_" +
                                      std::to_string(number_of_unnamed_loggers)};
-    ROS_ERROR_STREAM_NAMED("uwrt_params",
+    ROS_ERROR_STREAM_NAMED("qpup_params",
                            "Failed to construct a valid logger name from "
                            "NodeHandle. Using fallback of \""
                                << fallback_logger_name << "\"");
