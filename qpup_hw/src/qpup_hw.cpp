@@ -97,31 +97,23 @@ bool QPUPHW::loadJointInfoFromParameterServer(ros::NodeHandle &robot_hw_nh) {
   XmlRpc::XmlRpcValue joints_list;
   bool param_fetched = robot_hw_nh.getParam("joints", joints_list);
   if (!param_fetched) {
-    ROS_WARN_STREAM_NAMED(
-        name_, robot_hw_nh.getNamespace()
-                   << "/joints could not be loaded from parameter server.");
+    ROS_WARN_STREAM_NAMED(name_, robot_hw_nh.getNamespace() << "/joints could not be loaded from parameter server.");
     return false;
   }
-  ROS_DEBUG_STREAM_NAMED(name_, robot_hw_nh.getNamespace()
-                                    << "/joints loaded from parameter server.");
+  ROS_DEBUG_STREAM_NAMED(name_, robot_hw_nh.getNamespace() << "/joints loaded from parameter server.");
   ROS_ASSERT(joints_list.getType() == XmlRpc::XmlRpcValue::TypeArray);
 
   // NOLINTNEXTLINE(modernize-loop-convert): iterator only valid for
   // XmlRpcValue::TypeStruct
-  for (size_t joint_index = 0; joint_index < joints_list.size();
-       joint_index++) {
-    ROS_ASSERT(joints_list[joint_index].getType() ==
-               XmlRpc::XmlRpcValue::TypeStruct);
+  for (int joint_index = 0; joint_index < joints_list.size(); joint_index++) {
+    ROS_ASSERT(joints_list[joint_index].getType() == XmlRpc::XmlRpcValue::TypeStruct);
     ROS_ASSERT(joints_list[joint_index].hasMember("name"));
-    ROS_ASSERT(joints_list[joint_index]["name"].getType() ==
-               XmlRpc::XmlRpcValue::TypeString);
+    ROS_ASSERT(joints_list[joint_index]["name"].getType() == XmlRpc::XmlRpcValue::TypeString);
     std::string joint_name = joints_list[joint_index]["name"];
     joint_names_.push_back(joint_name);
     ROS_ASSERT(joints_list[joint_index].hasMember("transmission_reduction"));
-    ROS_ASSERT(joints_list[joint_index]["transmission_reduction"].getType() ==
-               XmlRpc::XmlRpcValue::TypeDouble);
-    joint_transmissions_.emplace(
-        joint_name, joints_list[joint_index]["transmission_reduction"]);
+    ROS_ASSERT(joints_list[joint_index]["transmission_reduction"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+    joint_transmissions_.emplace(joint_name, joints_list[joint_index]["transmission_reduction"]);
   }
   return true;
 }

@@ -13,6 +13,7 @@ namespace qpup_hw {
 class QPUPHW : public hardware_interface::RobotHW {
 public:
   explicit QPUPHW() : QPUPHW("QPUPHW"){};
+  virtual ~QPUPHW() = default;
 
   struct QPUPActuatorJointState {
     double joint_position;
