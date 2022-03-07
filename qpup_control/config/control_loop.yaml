@@ -1,0 +1,4 @@
+qpup:
+  qpup_control_loop_real:
+    control_frequency: 100.0 # hz
+    controllers_watchdog_timeout: 0.04 # seconds

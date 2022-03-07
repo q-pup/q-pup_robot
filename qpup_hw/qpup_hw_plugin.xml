@@ -1,0 +1,9 @@
+<library path="lib/libqpup_hw">
+    <class name="qpup_hw/QPUPHWReal"
+           type="qpup_hw::QPUPHWReal"
+           base_class_type="hardware_interface::RobotHW">
+        <description>
+            roscontrol hw interface for qpup
+        </description>
+    </class>
+</library>

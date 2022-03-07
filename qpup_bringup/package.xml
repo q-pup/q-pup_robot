@@ -3,30 +3,19 @@
         href="http://download.ros.org/schema/package_format3.xsd"
         schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>qpup_robot</name>
+  <name>qpup_bringup</name>
   <version>0.1.0</version>
-  <description>Q-PUP Robot Metapackage</description>
+  <description>All top-level robot roslauch files for qpup</description>
 
+  <maintainer email="melvin.mc.wang@gmail.com">Melvin wang</maintainer>
   <maintainer email="mtreynolds@uwaterloo.ca">Matt Reynolds</maintainer>
-  <maintainer email="melvin.wang@uwaterloo.ca">Melvin Wang</maintainer>
   <maintainer email="wrraftus@uwaterloo.ca">Walter Raftus</maintainer>
   <maintainer email="djhemphill@uwaterloo.ca">Dawson Hemphill</maintainer>
 
   <license>MIT</license>
 
-  <url type="website">https://q-pup.github.io</url>
-  <url type="bugtracker">https://github.com/q-pup/qpup_robot/issues</url>
-  <url type="repository">https://github.com/q-pup/qpup_robot</url>
-
   <buildtool_depend>catkin</buildtool_depend>
 
-  <exec_depend>qpup_bringup</exec_depend>
-  <exec_depend>qpup_config</exec_depend>
   <exec_depend>qpup_control</exec_depend>
-  <exec_depend>qpup_hw</exec_depend>
-  <exec_depend>qpup_vision</exec_depend>
 
-  <export>
-    <metapackage/>
-  </export>
 </package>
