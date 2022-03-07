@@ -17,7 +17,8 @@ bool QPUPHW::init(ros::NodeHandle & /*root_nh*/, ros::NodeHandle &robot_hw_nh) {
   imu_sensor_interface_.registerHandle(hardware_interface::ImuSensorHandle(
       "imu",
       "base_link",
-      imu_states_["imu"].orientation, imu_states_["imu"].orientation_covariance,
+      imu_states_["imu"].orientation,
+      imu_states_["imu"].orientation_covariance,
       imu_states_["imu"].angular_velocity,
       imu_states_["imu"].angular_velocity_covariance,
       imu_states_["imu"].linear_acceleration,
