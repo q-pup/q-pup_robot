@@ -44,6 +44,8 @@ class AHRSInternal : public IIOCompleteNotification, public IBoardCapabilities {
     /* IIOCompleteNotification Interface Implementation        */
     /***********************************************************/
 
+    // TODO(mreynolds): Make this RT safe
+
     void SetYawPitchRoll(IMUProtocol::YPRUpdate& ypr_update, long sensor_timestamp) {
         //printf("Setting pitch value to %f", ypr_update.pitch);
         ahrs->yaw               	= ypr_update.yaw;

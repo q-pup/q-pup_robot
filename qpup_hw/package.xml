@@ -16,10 +16,11 @@
 
     <buildtool_depend>catkin</buildtool_depend>
 
-    <depend>roscpp</depend>
 
     <depend>hardware_interface</depend>
     <depend>joint_limits_interface</depend>
+    <depend>roscpp</depend>
+    <depend>tf2</depend>
     <depend>transmission_interface</depend>
 
     <export>

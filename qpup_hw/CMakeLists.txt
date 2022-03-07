@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
         hardware_interface
         joint_limits_interface
         roscpp
+        tf2
         transmission_interface
         )
 find_package(Threads REQUIRED)
@@ -18,6 +19,7 @@ catkin_package(
         hardware_interface
         joint_limits_interface
         roscpp
+        tf2
         transmission_interface
 )
 
