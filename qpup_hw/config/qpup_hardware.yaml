@@ -3,7 +3,7 @@ qpup:
     shared_values:
       splay_transmission_reduction: &shared_splay_transmission_reduction 40.0
       hip_transmission_reduction: &shared_hip_transmission_reduction 40.0
-      knee_transmission_reduction: &shared_knee_transmission_reduction deg(rad(40.0 * 63 / 39))
+      knee_transmission_reduction: &shared_knee_transmission_reduction 64.61538461538462
 
     qpup_base:
       type: qpup_hw/QPUPHWReal
