@@ -5,7 +5,7 @@ void readUpdateWrite(qpup_utils::QPUP_CAN& can) {
   // read
 
   // send rtr requests
-  can.writeRTRFrame(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID, sizeof(qpup_odrive_get_motor_error_t));
+  can.writeODriveRTRFrame(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID);
 
   // read periodic data
   // read rtr responses
@@ -25,9 +25,9 @@ int main(int argc, char** argv) {
   assert(can.activate());
 
   while (ros::ok()) {
-    assert(can.writeRTRFrame(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID, sizeof(qpup_odrive_get_motor_error_t)));
-    assert(can.writeRTRFrame(QPUP_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID, sizeof(qpup_odrive_get_vbus_voltage_t)));
-    assert(can.writeRTRFrame(QPUP_AXIS_3_HEARTBEAT_FRAME_ID, sizeof(qpup_odrive_heartbeat_t)));
+    assert(can.writeODriveRTRFrame(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID));
+    assert(can.writeODriveRTRFrame(QPUP_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID));
+    assert(can.writeODriveRTRFrame(QPUP_AXIS_3_HEARTBEAT_FRAME_ID));
 
     const auto motor_error_opt = can.getLatestValue(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID);
     if (motor_error_opt.has_value()) {
@@ -37,13 +37,13 @@ int main(int argc, char** argv) {
 
     const auto vbus_opt = can.getLatestValue(QPUP_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID);
     if (vbus_opt.has_value()) {
-      const uint32_t vbus_voltage = std::get<qpup_odrive_get_vbus_voltage_t>(vbus_opt.value()).vbus_voltage;
+      const double vbus_voltage = std::get<qpup_odrive_get_vbus_voltage_t>(vbus_opt.value()).vbus_voltage;
       ROS_INFO_STREAM("Axis 3 vbus voltage: " << vbus_voltage);
     }
 
     const auto heartbeat_opt = can.getLatestValue(QPUP_AXIS_3_HEARTBEAT_FRAME_ID);
     if (heartbeat_opt.has_value()) {
-      const auto heartbeat_info = std::get<qpup_odrive_heartbeat_t>(motor_error_opt.value());
+      const auto heartbeat_info = std::get<qpup_odrive_heartbeat_t>(heartbeat_opt.value());
       ROS_INFO_STREAM("Axis 3 axis_error: " << heartbeat_info.axis_error);
       ROS_INFO_STREAM("Axis 3 axis_state: " << heartbeat_info.axis_state);
       ROS_INFO_STREAM("Axis 3 controller_flags: " << heartbeat_info.controller_flags);

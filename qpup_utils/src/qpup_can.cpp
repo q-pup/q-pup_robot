@@ -166,6 +166,10 @@ std::optional<QPUP_CAN::received_CAN_data> QPUP_CAN::getLatestValue(canid_t msg_
   }
 }
 
+bool QPUP_CAN::writeODriveRTRFrame(canid_t msg_id) {
+  return QPUP_CAN::writeRTRFrame(msg_id, QPUP_CAN::ODRIVE_RTR_DLC);
+}
+
 bool QPUP_CAN::writeRTRFrame(canid_t msg_id, uint8_t size) {
   if (internal_state_ != state::ACTIVE) {
     ROS_ERROR_STREAM_NAMED(logger_, "writeRTRFrame() called from invalid state: " << internal_state_);
@@ -196,6 +200,7 @@ bool QPUP_CAN::writeFrame(canid_t msg_id, uint8_t* data, uint8_t size) {
     std::memcpy(frame.data, data, size);
   }
 
+  // TODO non-blocking send. silently blocks thread when no other can nodes present on the bus
   const int bytes_sent = send(socket_handle_, &frame, sizeof(struct can_frame), 0);
   if (bytes_sent != sizeof(struct can_frame)) {
     ROS_ERROR_STREAM_NAMED(logger_, "Failed to send all " << sizeof(struct can_frame) << " bytes of msg to "
@@ -216,48 +221,46 @@ void QPUP_CAN::readSocketTask() {
   ROS_INFO_STREAM_NAMED(logger_, "CAN Read thread started!");
 
   while (run_read_thread_.test_and_set()) {
-    ROS_ERROR_STREAM_NAMED(logger_, "REEE");
     do {  // Read Until CAN Buffer is emptied
       bytes_read = recv(socket_handle_, &frame, sizeof(struct can_frame), 0);
       if (bytes_read == sizeof(struct can_frame)) {
         received_CAN_data data;
-        ROS_ERROR_STREAM_NAMED(logger_, "received_data");
 
         switch (frame.can_id & CAN_ERR_MASK) {
           CASE_ODRIVE_IDS(HEARTBEAT) : {
-            UNPACK_MSG_STRUCT(heartbeat, data, frame);
+            UNPACK_ODRIVE_MSG_STRUCT(heartbeat, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_MOTOR_ERROR) : {
-            UNPACK_MSG_STRUCT(get_motor_error, data, frame);
+            UNPACK_ODRIVE_MSG_STRUCT(get_motor_error, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_ENCODER_ERROR) : {
-            UNPACK_MSG_STRUCT(get_encoder_error, data, frame);
+            UNPACK_ODRIVE_MSG_STRUCT(get_encoder_error, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_SENSORLESS_ERROR) : {
-            UNPACK_MSG_STRUCT(get_sensorless_error, data, frame);
+            UNPACK_ODRIVE_MSG_STRUCT(get_sensorless_error, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_ENCODER_ESTIMATES) : {
-            UNPACK_MSG_STRUCT(get_encoder_estimates, data, frame);
+            UNPACK_ODRIVE_MSG_STRUCT(get_encoder_estimates, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_ENCODER_COUNT) : {
-            UNPACK_MSG_STRUCT(get_encoder_count, data, frame);
+            UNPACK_ODRIVE_MSG_STRUCT(get_encoder_count, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_IQ) : {
-            UNPACK_MSG_STRUCT(get_iq, data, frame);
+            UNPACK_ODRIVE_MSG_STRUCT(get_iq, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_SENSORLESS_ESTIMATES) : {
-            UNPACK_MSG_STRUCT(get_sensorless_estimates, data, frame);
+            UNPACK_ODRIVE_MSG_STRUCT(get_sensorless_estimates, data, frame);
             break;
           }
           CASE_ODRIVE_IDS(GET_VBUS_VOLTAGE) : {
-            UNPACK_MSG_STRUCT(get_vbus_voltage, data, frame);
+            UNPACK_ODRIVE_MSG_STRUCT(get_vbus_voltage, data, frame);
             break;
           }
 

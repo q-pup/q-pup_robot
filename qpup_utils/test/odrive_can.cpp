@@ -8,8 +8,8 @@ TEST(TestSuite, testCase1) {
   ASSERT_TRUE(can.configure());
   ASSERT_TRUE(can.activate());
 
-  ASSERT_TRUE(can.writeRTRFrame(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID, sizeof(qpup_odrive_get_motor_error_t)));
-  ASSERT_TRUE(can.writeRTRFrame(QPUP_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID, sizeof(qpup_odrive_get_vbus_voltage_t)));
+  ASSERT_TRUE(can.writeODriveRTRFrame(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID));
+  ASSERT_TRUE(can.writeODriveRTRFrame(QPUP_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID));
 
   auto motor_error = can.getLatestValue(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID);
   auto vbus = can.getLatestValue(QPUP_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID);
