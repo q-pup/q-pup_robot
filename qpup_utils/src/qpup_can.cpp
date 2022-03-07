@@ -214,6 +214,10 @@ bool QPUP_CAN::writeFrame(canid_t msg_id, uint8_t* data, uint8_t size) {
   return true;
 }
 
+std::string QPUP_CAN::getLogger(){
+  return logger_;
+}
+
 void QPUP_CAN::readSocketTask() {
   struct can_frame frame {};
   int bytes_read;
@@ -263,6 +267,10 @@ void QPUP_CAN::readSocketTask() {
             UNPACK_ODRIVE_MSG_STRUCT(get_vbus_voltage, data, frame);
             break;
           }
+
+          case 0x81109216:
+            // FIXME: Battery UAVCAN frame not handled
+            break;
 
           default:
             ROS_ERROR_STREAM_NAMED(

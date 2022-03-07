@@ -36,10 +36,7 @@
   case QPUP_AXIS_12_##MSG_NAME##_FRAME_ID
 // clang-format on
 
-namespace qpup_utils {
-
-class QPUP_CAN {
-  // MSG_NAME must be lower case
+// MSG_NAME must be lower case
 #define UNPACK_ODRIVE_MSG_STRUCT(MSG_NAME, DATA_VARIANT, SRC_CAN_FRAME)                                             \
   do {                                                                                                              \
     if (SRC_CAN_FRAME.can_dlc != ODRIVE_RTR_DLC) {                                                                  \
@@ -50,17 +47,45 @@ class QPUP_CAN {
     DATA_VARIANT.emplace<qpup_odrive_##MSG_NAME##_t>();                                                             \
     if (qpup_odrive_##MSG_NAME##_unpack(std::get_if<qpup_odrive_##MSG_NAME##_t>(&DATA_VARIANT), SRC_CAN_FRAME.data, \
                                         ODRIVE_RTR_DLC) < 0) {                                                      \
-      ROS_ERROR_STREAM_NAMED(logger_, "Failed to unpack message via qpup_odrive_##MSG_NAME##_unpack()");            \
+      ROS_ERROR_STREAM_NAMED(logger_,                                                                               \
+                             "Failed to unpack message via " << STRINGIFY(qpup_odrive_##MSG_NAME##_unpack()));      \
     }                                                                                                               \
   } while (0)
 
+#define STRINGIFY(s) _STRINGIFY(s)
+#define _STRINGIFY(s) #s
+
+#define ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, AXIS)                                                      \
+  do {                                                                                                          \
+    if (!QPUP_CAN_INSTANCE.writeODriveRTRFrame(QPUP_AXIS_##AXIS##_##COMMAND##_FRAME_ID)) {                      \
+      ROS_ERROR_STREAM_NAMED(                                                                                   \
+          QPUP_CAN_INSTANCE.getLogger(), "Failed to write ODrive RTR Frame: " << STRINGIFY(QPUP_AXIS_##AXIS##_##COMMAND##_FRAME_ID)); \
+    }                                                                                                           \
+  } while (0)
+
+#define ODRIVE_WRITE_RTR_ALL(QPUP_CAN_INSTANCE, COMMAND) \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 1);       \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 2);       \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 3);       \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 4);       \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 5);       \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 6);       \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 7);       \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 8);       \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 9);       \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 10);      \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 11);      \
+  ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, 12);
+
+namespace qpup_utils {
+
+class QPUP_CAN {
  public:
   using received_CAN_data =
       std::variant<qpup_odrive_heartbeat_t, qpup_odrive_get_motor_error_t, qpup_odrive_get_encoder_error_t,
                    qpup_odrive_get_sensorless_error_t, qpup_odrive_get_encoder_estimates_t,
                    qpup_odrive_get_encoder_count_t, qpup_odrive_get_iq_t, qpup_odrive_get_sensorless_estimates_t,
                    qpup_odrive_get_vbus_voltage_t>;
-
   explicit QPUP_CAN() = delete;
 
   /**
@@ -81,6 +106,9 @@ class QPUP_CAN {
   bool writeODriveRTRFrame(canid_t msg_id);
   bool writeRTRFrame(canid_t msg_id, uint8_t size);
   bool writeFrame(canid_t msg_id, uint8_t* data, uint8_t size);
+
+ protected:
+  std::string getLogger()
 
  private:
   void readSocketTask();

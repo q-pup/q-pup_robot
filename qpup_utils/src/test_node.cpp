@@ -1,21 +1,6 @@
 #include "qpup_generated/qpup_can_generated.h"
 #include "qpup_utils/qpup_can.hpp"
 
-void readUpdateWrite(qpup_utils::QPUP_CAN& can) {
-  // read
-
-  // send rtr requests
-  can.writeODriveRTRFrame(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID);
-
-  // read periodic data
-  // read rtr responses
-
-  // update
-
-  // write
-  // write commands
-}
-
 int main(int argc, char** argv) {
   ros::init(argc, argv, "odrive_can_test");
   ros::NodeHandle nh;
@@ -25,9 +10,13 @@ int main(int argc, char** argv) {
   assert(can.activate());
 
   while (ros::ok()) {
-    assert(can.writeODriveRTRFrame(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID));
-    assert(can.writeODriveRTRFrame(QPUP_AXIS_3_GET_VBUS_VOLTAGE_FRAME_ID));
-    assert(can.writeODriveRTRFrame(QPUP_AXIS_3_HEARTBEAT_FRAME_ID));
+    ODRIVE_WRITE_RTR_ALL(can, GET_MOTOR_ERROR);
+    ODRIVE_WRITE_RTR_ALL(can, GET_ENCODER_ERROR);
+    ODRIVE_WRITE_RTR_ALL(can, GET_SENSORLESS_ERROR);
+    ODRIVE_WRITE_RTR_ALL(can, GET_ENCODER_COUNT);
+    ODRIVE_WRITE_RTR_ALL(can, GET_IQ);
+    ODRIVE_WRITE_RTR_ALL(can, GET_SENSORLESS_ESTIMATES);
+    ODRIVE_WRITE_RTR_ALL(can, GET_VBUS_VOLTAGE);
 
     const auto motor_error_opt = can.getLatestValue(QPUP_AXIS_3_GET_MOTOR_ERROR_FRAME_ID);
     if (motor_error_opt.has_value()) {
@@ -55,9 +44,3 @@ int main(int argc, char** argv) {
   assert(can.deactivate());
   assert(can.cleanup());
 }
-
-// Encode signals (if needed aka if floating or scaled/offset aka noninteger)
-// Pack RTR frame
-// Send Frames
-// get latest RTR
-// get some latest streamed
