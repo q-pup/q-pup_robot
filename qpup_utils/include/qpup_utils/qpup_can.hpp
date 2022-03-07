@@ -107,8 +107,7 @@ class QPUP_CAN {
   bool writeRTRFrame(canid_t msg_id, uint8_t size);
   bool writeFrame(canid_t msg_id, uint8_t* data, uint8_t size);
 
- protected:
-  std::string getLogger()
+  std::string getLogger();
 
  private:
   void readSocketTask();
