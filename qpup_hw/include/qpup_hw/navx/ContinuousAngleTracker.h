@@ -8,6 +8,8 @@
 #ifndef SRC_CONTINUOUSANGLETRACKER_H_
 #define SRC_CONTINUOUSANGLETRACKER_H_
 
+namespace qpup_hw::navx {
+
 class ContinuousAngleTracker {
     float last_angle;
     double last_rate;
@@ -19,5 +21,7 @@ public:
     double GetAngle();
     double GetRate();
 };
+
+} // qpup_hw::navx
 
 #endif /* SRC_CONTINUOUSANGLETRACKER_H_ */

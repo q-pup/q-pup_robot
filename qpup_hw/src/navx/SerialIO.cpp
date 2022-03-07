@@ -14,6 +14,8 @@ static const double IO_TIMEOUT_SECONDS = 1.0;
 
 #define SERIALIO_DASHBOARD_DEBUG
 
+namespace qpup_hw::navx {
+
 SerialIO::SerialIO( std::string port_id,
                     uint8_t update_rate_hz,
                     bool processed_data,
@@ -519,3 +521,5 @@ void SerialIO::ZeroDisplacement() {
 void SerialIO::Stop() {
     stop = true;
 }
+
+} // qpup_hw::navx

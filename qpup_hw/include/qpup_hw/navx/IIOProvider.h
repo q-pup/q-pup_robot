@@ -10,6 +10,8 @@
 
 #include <stdint.h>
 
+namespace qpup_hw::navx {
+
 class IIOProvider {
 public:
     IIOProvider() {}
@@ -22,5 +24,7 @@ public:
     virtual void   Run() = 0;
     virtual void   Stop() = 0;
 };
+
+} // qpup_hw::navx
 
 #endif /* SRC_IIOPROVIDER_H_ */

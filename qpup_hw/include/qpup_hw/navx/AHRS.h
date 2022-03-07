@@ -12,6 +12,8 @@
 #include <memory>
 #include <string>
 
+namespace qpup_hw::navx {
+
 class IIOProvider;
 class ContinuousAngleTracker;
 class InertialDataIntegrator;
@@ -197,5 +199,7 @@ private:
 
     uint8_t GetActualUpdateRateInternal(uint8_t update_rate);
 };
+
+} // qpup_hw::navx
 
 #endif /* SRC_AHRS_H_ */

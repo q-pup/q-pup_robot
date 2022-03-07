@@ -8,6 +8,8 @@
 #ifndef SRC_OFFSETTRACKER_H_
 #define SRC_OFFSETTRACKER_H_
 
+namespace qpup_hw::navx {
+
 class OffsetTracker {
     float *value_history;
     int next_value_history_index;
@@ -24,5 +26,7 @@ private:
     double GetAverageFromHistory();
     double GetOffset();
 };
+
+} // qpup_hw::navx
 
 #endif /* SRC_OFFSETTRACKER_H_ */

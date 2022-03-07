@@ -14,6 +14,7 @@
 #include <thread>
 #include <chrono>
 
+namespace qpup_hw::navx {
 
 class SerialPort {
 
@@ -177,3 +178,5 @@ class SerialPort {
     }
 
 };
+
+} // qpup_hw::navx

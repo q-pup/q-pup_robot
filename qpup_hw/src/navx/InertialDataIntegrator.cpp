@@ -7,6 +7,8 @@
 
 #include <qpup_hw/navx/InertialDataIntegrator.h>
 
+namespace qpup_hw::navx {
+
 InertialDataIntegrator::InertialDataIntegrator() {
     ResetDisplacement();
 }
@@ -62,3 +64,5 @@ float InertialDataIntegrator::GetDisplacementY() {
 float InertialDataIntegrator::GetDisplacementZ() {
      return 0;
 }
+
+} // qpup_hw::navx

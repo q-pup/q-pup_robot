@@ -7,6 +7,8 @@
 
 #include <qpup_hw/navx/ContinuousAngleTracker.h>
 
+namespace qpup_hw::navx {
+
 ContinuousAngleTracker::ContinuousAngleTracker() {
     this->last_angle = 0.0f;
     this->zero_crossing_count = 0;
@@ -76,3 +78,5 @@ double ContinuousAngleTracker::GetAngle() {
 double ContinuousAngleTracker::GetRate() {
     return this->last_rate;
 }
+
+} // qpup_hw::navx

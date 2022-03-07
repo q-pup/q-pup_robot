@@ -47,6 +47,8 @@ THE SOFTWARE.
 
 #define BINARY_PACKET_INDICATOR_CHAR '#'
 
+namespace qpup_hw::navx {
+
 /* AHRS Protocol encodes certain data in binary format, unlike the IMU  */
 /* protocol, which encodes all data in ASCII characters.  Thus, the     */
 /* packet start and message termination sequences may occur within the  */
@@ -890,5 +892,7 @@ public:
     }
 
 };
+
+} // qpup_hw::navx
 
 #endif // _IMU_PROTOCOL_H_

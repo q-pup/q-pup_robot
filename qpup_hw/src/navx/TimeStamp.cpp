@@ -1,5 +1,4 @@
 #include <iostream>
-#include <qpup_hw/navx/TimeStamp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <qpup_hw/navx/AHRS.h>
@@ -20,7 +19,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Program Executing\n";
     signal(SIGINT, handle_sig);
 
-    AHRS com = AHRS("/dev/ttyACM0");
+    qpup_hw::navx::AHRS com = qpup_hw::navx::AHRS("/dev/ttyACM0");
 
     printf("Initializing\n\n");
 

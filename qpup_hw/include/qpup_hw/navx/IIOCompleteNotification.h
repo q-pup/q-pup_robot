@@ -13,6 +13,8 @@
 #include <qpup_hw/navx/IMUProtocol.h>
 #include <qpup_hw/navx/AHRSProtocol.h>
 
+namespace qpup_hw::navx {
+
 class IIOCompleteNotification {
 public:
     IIOCompleteNotification() {}
@@ -33,5 +35,7 @@ public:
     virtual void SetBoardID(AHRSProtocol::BoardID& board_id) = 0;
     virtual void SetBoardState( BoardState& board_state) = 0;
 };
+
+} // qpup_hw::navx
 
 #endif /* SRC_IIOCOMPLETENOTIFICATION_H_ */

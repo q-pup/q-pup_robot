@@ -117,6 +117,8 @@ THE SOFTWARE.
 
 #define IMU_PROTOCOL_MAX_MESSAGE_LENGTH QUATERNION_UPDATE_MESSAGE_LENGTH
 
+namespace qpup_hw::navx {
+
 class IMUProtocol
 {
 public:
@@ -493,5 +495,7 @@ protected:
     }
 
 };
+
+} // qpup_hw::navx
 
 #endif // _IMU_PROTOCOL_H_

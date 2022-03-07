@@ -8,6 +8,8 @@
 #ifndef SRC_IBOARDCAPABILITIES_H_
 #define SRC_IBOARDCAPABILITIES_H_
 
+namespace qpup_hw::navx {
+
 class IBoardCapabilities {
 public:
     IBoardCapabilities() {}
@@ -16,5 +18,7 @@ public:
     virtual bool IsDisplacementSupported() = 0;
     virtual bool IsAHRSPosTimestampSupported() = 0;
 };
+
+} // qpup_hw::navx
 
 #endif /* SRC_IBOARDCAPABILITIES_H_ */

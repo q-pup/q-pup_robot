@@ -31,6 +31,8 @@ static const uint32_t   DEFAULT_SPI_BITRATE                 = 500000;
 static const uint8_t    NAVX_MXP_I2C_ADDRESS                = 0x32;
 static const float  	QUATERNION_HISTORY_SECONDS			= 5.0f;
 
+namespace qpup_hw::navx {
+
 class AHRSInternal : public IIOCompleteNotification, public IBoardCapabilities {
     AHRS *ahrs;
     friend class AHRS;
@@ -1325,3 +1327,5 @@ int AHRS::GetRequestedUpdateRate() {
 void AHRS::Close() {
     io->Stop();
 }
+
+} // qpup_hw::navx

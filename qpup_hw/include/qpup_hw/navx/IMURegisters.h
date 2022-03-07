@@ -27,6 +27,8 @@ THE SOFTWARE.
 
 #include <qpup_hw/navx/IMUProtocol.h>
 
+namespace qpup_hw::navx {
+
 /*******************************************************************/
 /*******************************************************************/
 /*                      Register Definitions                       */
@@ -457,5 +459,6 @@ public:
     }
 };
 
+} // qpup_hw::navx
 
 #endif /* IMU_REGISTERS_H_ */

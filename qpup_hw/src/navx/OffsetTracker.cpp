@@ -7,6 +7,8 @@
 
 #include <qpup_hw/navx/OffsetTracker.h>
 
+namespace qpup_hw::navx {
+
 OffsetTracker::OffsetTracker(int history_length) {
     history_len = history_length;
     value_history = new float[history_len];
@@ -52,3 +54,5 @@ double OffsetTracker::ApplyOffset( double value ) {
     }
     return offseted_value;
 }
+
+} // qpup_hw::navx

@@ -19,6 +19,8 @@
 #include <qpup_hw/navx/IIOCompleteNotification.h>
 #include <qpup_hw/navx/IBoardCapabilities.h>
 
+namespace qpup_hw::navx {
+
 class SerialIO : public IIOProvider {
 
 
@@ -65,5 +67,7 @@ private:
     void DispatchStreamResponse(IMUProtocol::StreamResponse& response);
     int DecodePacketHandler(char * received_data, int bytes_remaining);
 };
+
+} // qpup_hw::navx
 
 #endif /* SRC_SERIALIO_H_ */
