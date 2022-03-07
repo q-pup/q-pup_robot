@@ -6,7 +6,7 @@ qpup:
       knee_transmission_reduction: &shared_knee_transmission_reduction deg(rad(40 * 63 / 39))
 
     qpup_base:
-      type: qpup_hw/UQPUPHWReal
+      type: qpup_hw/QPUPHWReal
 
       joints:
         - name: lf_hip_joint
