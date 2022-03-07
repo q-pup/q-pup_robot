@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hardware_interface/controller_info.h"
+#include "hardware_interface/imu_sensor_interface.h"
 #include "hardware_interface/joint_command_interface.h"
 #include "hardware_interface/joint_state_interface.h"
 #include "hardware_interface/robot_hw.h"
@@ -28,6 +29,16 @@ public:
     Type type;
     double actuator_data;
     double joint_data;
+  };
+
+  /// IMU sensor data
+  struct ImuData {
+    double orientation[4];                     ///< Quaternion (x,y,z,w)
+    double orientation_covariance[9];          ///< Row major 3x3 matrix about (x,y,z)
+    double angular_velocity[3];                ///< Vector (x,y,z), in deg/s
+    double angular_velocity_covariance[9];     ///< Row major 3x3 matrix about (x,y,z)
+    double linear_acceleration[3];             ///< Vector (x,y,z), in m/s^2
+    double linear_acceleration_covariance[9];  ///< Row major 3x3 matrix about (x,y,z)
   };
 
   bool init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) override;
@@ -62,8 +73,12 @@ protected:
   std::map<std::string, transmission_interface::JointData> joint_state_data_;
   std::map<std::string, transmission_interface::JointData> joint_command_data_;
 
+  // IMU States
+  std::map<std::string, ImuData> imu_states_;
+
   // State Interfaces
   hardware_interface::JointStateInterface joint_state_interface_;
+  hardware_interface::ImuSensorInterface  imu_sensor_interface_;
   transmission_interface::ActuatorToJointStateInterface
       actuator_to_joint_state_interface_;
 
