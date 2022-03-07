@@ -37,7 +37,6 @@ include_directories(
 # Declare and link the C++ Library
 add_library(${PROJECT_NAME}
     src/qpup_params.cpp
-    src/qpup_utils.cpp
     )
 target_compile_features(${PROJECT_NAME} PUBLIC c_std_11 cxx_std_14)
 
@@ -58,7 +57,7 @@ add_executable(
     src/test_node.cpp
 )
 target_link_libraries(test-node qpup-can ${PROJECT_NAME} ${catkin_LIBRARIES})
-
+QPUPJointCommand
 #############
 ## Testing ##
 #############

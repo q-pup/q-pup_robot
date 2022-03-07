@@ -58,8 +58,7 @@ void QPUPHW::doSwitch(
          controller.claimed_resources) {
       for (const auto &joint_name :
            hardware_interface_resource_list.resources) {
-        actuator_joint_commands_[joint_name].type =
-            QPUPJointCommand::Type::NONE;
+        actuator_joint_commands_[joint_name].type = QPUPActuatorJointCommand::Type::NONE;
         actuator_joint_commands_[joint_name].joint_data = 0.0;
       }
     }
