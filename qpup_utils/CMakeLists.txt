@@ -57,7 +57,7 @@ add_executable(
     src/test_node.cpp
 )
 target_link_libraries(test-node qpup-can ${PROJECT_NAME} ${catkin_LIBRARIES})
-QPUPJointCommand
+
 #############
 ## Testing ##
 #############
@@ -98,10 +98,6 @@ install(DIRECTORY include/${PROJECT_NAME}/
     )
 
 # Install Scripts
-install(PROGRAMS
-    scripts/bringup_can.sh
-    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
 catkin_install_python(PROGRAMS
     scripts/generate_dbc.py
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

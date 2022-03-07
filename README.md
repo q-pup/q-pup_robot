@@ -26,5 +26,7 @@ rosdep install --from-paths . --ignore-src -r -y
 # Bringup
 
 ```
-rosrun qpup_utils bringup_can.sh
+rosrun qpup_bringup bringup_can.sh
+
+roslaunch qpup_bringup qpup.launch
 ```
