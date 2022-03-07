@@ -7,6 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
         roscpp
         transmission_interface
         )
+find_package(Threads REQUIRED)
 
 catkin_package(
         INCLUDE_DIRS
@@ -30,6 +31,21 @@ add_library(${PROJECT_NAME}
         src/${PROJECT_NAME}_real.cpp
         )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+
+add_library(${PROJECT_NAME}_navx
+        src/navx/AHRS.cpp
+        src/navx/ContinuousAngleTracker.cpp
+        src/navx/InertialDataIntegrator.cpp
+        src/navx/OffsetTracker.cpp
+        src/navx/SerialIO.cpp
+)
+target_link_libraries(${PROJECT_NAME}_navx ${CMAKE_THREAD_LIBS_INIT})
+
+add_executable(navx_test
+        src/navx/TimeStamp.cpp
+)
+target_link_libraries(navx_test ${PROJECT_NAME}_navx)
+
 
 install(TARGETS
         ${PROJECT_NAME}
