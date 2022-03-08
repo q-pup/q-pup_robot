@@ -21,26 +21,26 @@
 #include <qpup_hw/navx/ContinuousAngleTracker.h>
 #include <qpup_hw/navx/SerialIO.h>
 
-static const uint8_t    NAVX_DEFAULT_UPDATE_RATE_HZ         = 60;
-static const int        YAW_HISTORY_LENGTH                  = 10;
-static const int16_t    DEFAULT_ACCEL_FSR_G                 = 2;
-static const int16_t    DEFAULT_GYRO_FSR_DPS                = 2000;
-static const uint32_t   MAX_SPI_BITRATE                     = 2000000;
-static const uint32_t   MIN_SPI_BITRATE                     = 100000;
-static const uint32_t   DEFAULT_SPI_BITRATE                 = 500000;
-static const uint8_t    NAVX_MXP_I2C_ADDRESS                = 0x32;
-static const float  	QUATERNION_HISTORY_SECONDS			= 5.0f;
+static const uint8_t NAVX_DEFAULT_UPDATE_RATE_HZ = 60;
+static const int YAW_HISTORY_LENGTH = 10;
+static const int16_t DEFAULT_ACCEL_FSR_G = 2;
+static const int16_t DEFAULT_GYRO_FSR_DPS = 2000;
+// static const uint32_t   MAX_SPI_BITRATE                     = 2000000;
+// static const uint32_t   MIN_SPI_BITRATE                     = 100000;
+// static const uint32_t   DEFAULT_SPI_BITRATE                 = 500000;
+// static const uint8_t    NAVX_MXP_I2C_ADDRESS                = 0x32;
+// static const float  	QUATERNION_HISTORY_SECONDS			= 5.0f;
 
 namespace qpup_hw::navx {
 
 class AHRSInternal : public IIOCompleteNotification, public IBoardCapabilities {
-    AHRS *ahrs;
-    friend class AHRS;
-    AHRSInternal(AHRS* ahrs) {
-        this->ahrs = ahrs;
-    }
+  AHRS *ahrs;
+  friend class AHRS;
+  AHRSInternal(AHRS *ahrs) {
+    this->ahrs = ahrs;
+  }
 
-    /***********************************************************/
+  /***********************************************************/
     /* IIOCompleteNotification Interface Implementation        */
     /***********************************************************/
 

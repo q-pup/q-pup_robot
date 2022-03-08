@@ -33,6 +33,8 @@ add_library(${PROJECT_NAME}
     src/${PROJECT_NAME}_loop.cpp
     src/${PROJECT_NAME}_loop_real.cpp
     )
+target_compile_features(${PROJECT_NAME} PUBLIC c_std_11 cxx_std_17)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
 add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cpp)
 set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")

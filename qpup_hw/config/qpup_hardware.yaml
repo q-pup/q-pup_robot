@@ -1,9 +1,9 @@
 qpup:
   combined_robot_hw:
     shared_values:
-      splay_transmission_reduction: &shared_splay_transmission_reduction 40
-      hip_transmission_reduction: &shared_hip_transmission_reduction 40
-      knee_transmission_reduction: &shared_knee_transmission_reduction deg(rad(40 * 63 / 39))
+      splay_transmission_reduction: &shared_splay_transmission_reduction 40.0
+      hip_transmission_reduction: &shared_hip_transmission_reduction 40.0
+      knee_transmission_reduction: &shared_knee_transmission_reduction 64.61538461538462
 
     qpup_base:
       type: qpup_hw/QPUPHWReal
@@ -11,37 +11,49 @@ qpup:
       joints:
         - name: lf_hip_joint
           transmission_reduction: *shared_splay_transmission_reduction
+          odrive_axis_can_node_id: 0
 
         - name: lf_upper_leg_joint
           transmission_reduction: *shared_hip_transmission_reduction
+          odrive_axis_can_node_id: 0
 
         - name: lf_lower_leg_joint
           transmission_reduction: *shared_knee_transmission_reduction
+          odrive_axis_can_node_id: 0
 
         - name: rf_hip_joint
           transmission_reduction: *shared_splay_transmission_reduction
+          odrive_axis_can_node_id: 0
 
         - name: rf_upper_leg_joint
           transmission_reduction: *shared_hip_transmission_reduction
+          odrive_axis_can_node_id: 0
 
         - name: rf_lower_leg_joint
           transmission_reduction: *shared_knee_transmission_reduction
+          odrive_axis_can_node_id: 0
 
         - name: lh_hip_joint
           transmission_reduction: *shared_splay_transmission_reduction
+          odrive_axis_can_node_id: 0
 
         - name: lh_upper_leg_joint
           transmission_reduction: *shared_hip_transmission_reduction
+          odrive_axis_can_node_id: 0
 
         - name: lh_lower_leg_joint
           transmission_reduction: *shared_knee_transmission_reduction
+          odrive_axis_can_node_id: 0
 
         - name: rh_hip_joint
           transmission_reduction: *shared_splay_transmission_reduction
+          odrive_axis_can_node_id: 10
 
         - name: rh_upper_leg_joint
           transmission_reduction: *shared_hip_transmission_reduction
+          odrive_axis_can_node_id: 8
 
         - name: rh_lower_leg_joint
           transmission_reduction: *shared_knee_transmission_reduction
+          odrive_axis_can_node_id: 7
 

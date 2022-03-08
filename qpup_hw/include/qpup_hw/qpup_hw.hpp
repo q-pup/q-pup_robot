@@ -13,6 +13,7 @@ namespace qpup_hw {
 class QPUPHW : public hardware_interface::RobotHW {
 public:
   explicit QPUPHW() : QPUPHW("QPUPHW"){};
+  virtual ~QPUPHW() = default;
 
   struct QPUPActuatorJointState {
     double joint_position;
@@ -51,15 +52,13 @@ public:
       const std::list<hardware_interface::ControllerInfo> &start_list,
       const std::list<hardware_interface::ControllerInfo> &stop_list) override;
 
-  inline std::string getName() const { return name_; }
-
 protected:
-  explicit QPUPHW(std::string name) : name_(std::move(name)) {}
+ explicit QPUPHW(std::string logger_name) : logger_(std::move(logger_name)) {}
 
-  const std::string name_;
+ const std::string logger_;
 
-  // Joint States and Commands mapped to Joint Names
-  std::vector<std::string> joint_names_;
+ // Joint States and Commands mapped to Joint Names
+ std::vector<std::string> joint_names_;
   std::map<std::string, QPUPActuatorJointState> actuator_joint_states_;
   std::map<std::string, QPUPActuatorJointCommand> actuator_joint_commands_;
 

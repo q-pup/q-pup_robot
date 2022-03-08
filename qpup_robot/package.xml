@@ -8,7 +8,7 @@
   <description>Q-PUP Robot Metapackage</description>
 
   <maintainer email="mtreynolds@uwaterloo.ca">Matt Reynolds</maintainer>
-  <maintainer email="melvin.wang@uwaterloo.ca">Melvin Wang</maintainer>
+  <maintainer email="melvin.mc.wang@gmail.com">Melvin Wang</maintainer>
   <maintainer email="wrraftus@uwaterloo.ca">Walter Raftus</maintainer>
   <maintainer email="djhemphill@uwaterloo.ca">Dawson Hemphill</maintainer>
 
@@ -25,6 +25,7 @@
   <exec_depend>qpup_control</exec_depend>
   <exec_depend>qpup_hw</exec_depend>
   <exec_depend>qpup_vision</exec_depend>
+  <exec_depend>qpup_utils</exec_depend>
 
   <export>
     <metapackage/>

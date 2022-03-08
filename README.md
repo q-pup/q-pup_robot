@@ -22,3 +22,11 @@ git clone https://github.com/q-pup/qpup_robot.git
 rosinstall --catkin . qpup_robot/qpup_robot.rosinstall
 rosdep install --from-paths . --ignore-src -r -y
 ```
+
+# Bringup
+
+```
+rosrun qpup_bringup bringup_can.sh
+
+roslaunch qpup_bringup qpup.launch
+```
