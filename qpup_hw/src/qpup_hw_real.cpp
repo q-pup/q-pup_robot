@@ -78,8 +78,8 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
         odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_ENCODER_ESTIMATES_FRAME_ID));
     if (encoder_estimates_frame.has_value()) {
       const auto encoder_estimates = std::get<qpup_odrive_get_encoder_estimates_t>(encoder_estimates_frame.value());
-      actuator_joint_states_[joint_name].actuator_velocity = encoder_estimates.vel_estimate;
-      actuator_joint_states_[joint_name].actuator_position = encoder_estimates.pos_estimate;
+      actuator_joint_states_[joint_name].actuator_velocity = encoder_estimates.vel_estimate * RADIANS_PER_ROTATION;
+      actuator_joint_states_[joint_name].actuator_position = encoder_estimates.pos_estimate * RADIANS_PER_ROTATION;
     }
 
     // Read RTR Responses
@@ -121,8 +121,7 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
         qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_IQ_FRAME_ID));
     if (iq_frame.has_value()) {
       const auto iq = std::get<qpup_odrive_get_iq_t>(iq_frame.value());
-      // FIXME!!!! Should divide "effort" read back by kt to get real torque feedback
-      actuator_joint_states_[joint_name].actuator_effort = iq.iq_measured;
+      actuator_joint_states_[joint_name].actuator_effort = iq.iq_measured * TORQUE_CONSTANT;
     }
 
     const auto vbus_voltage_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
@@ -171,8 +170,9 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
         // Encode Signals
         qpup_odrive_set_input_pos_t set_input_pos_message{};
         set_input_pos_message.input_pos =
-            qpup_odrive_set_input_pos_input_pos_encode(actuator_joint_commands_[joint_name].actuator_data);
-        set_input_pos_message.vel_ff = qpup_odrive_set_input_pos_vel_ff_encode(0);
+            qpup_odrive_set_input_pos_input_pos_encode(actuator_joint_commands_[joint_name].actuator_data) /
+            RADIANS_PER_ROTATION;
+        set_input_pos_message.vel_ff = qpup_odrive_set_input_pos_vel_ff_encode(0) / RADIANS_PER_ROTATION;
         set_input_pos_message.torque_ff = qpup_odrive_set_input_pos_torque_ff_encode(0);
 
         // Pack Message
@@ -200,7 +200,8 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
         // Encode Signals
         qpup_odrive_set_input_vel_t set_input_vel_message{};
         set_input_vel_message.input_vel =
-            qpup_odrive_set_input_vel_input_vel_encode(actuator_joint_commands_[joint_name].actuator_data);
+            qpup_odrive_set_input_vel_input_vel_encode(actuator_joint_commands_[joint_name].actuator_data) /
+            RADIANS_PER_ROTATION;
         set_input_vel_message.input_torque_ff = qpup_odrive_set_input_vel_input_torque_ff_encode(0);
 
         // Pack Message
