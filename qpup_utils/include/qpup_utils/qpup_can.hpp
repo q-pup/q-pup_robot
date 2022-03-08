@@ -55,12 +55,12 @@
 #define STRINGIFY(s) _STRINGIFY(s)
 #define _STRINGIFY(s) #s
 
-#define ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, AXIS)                                                      \
-  do {                                                                                                          \
-    if (!QPUP_CAN_INSTANCE.writeODriveRTRFrame(QPUP_AXIS_##AXIS##_##COMMAND##_FRAME_ID)) {                      \
-      ROS_ERROR_STREAM_NAMED(                                                                                   \
-          QPUP_CAN_INSTANCE.getLogger(), "Failed to write ODrive RTR Frame: " << STRINGIFY(QPUP_AXIS_##AXIS##_##COMMAND##_FRAME_ID)); \
-    }                                                                                                           \
+#define ODRIVE_WRITE_RTR(QPUP_CAN_INSTANCE, COMMAND, AXIS)                                                     \
+  do {                                                                                                         \
+    if (!QPUP_CAN_INSTANCE.writeODriveRTRFrame(QPUP_AXIS_##AXIS##_##COMMAND##_FRAME_ID)) {                     \
+      ROS_ERROR_STREAM_NAMED(QPUP_CAN_INSTANCE.getLogger(), "Failed to write ODrive RTR Frame: " << STRINGIFY( \
+                                                                QPUP_AXIS_##AXIS##_##COMMAND##_FRAME_ID));     \
+    }                                                                                                          \
   } while (0)
 
 #define ODRIVE_WRITE_RTR_ALL(QPUP_CAN_INSTANCE, COMMAND) \
@@ -105,7 +105,9 @@ class QPUP_CAN {
   std::optional<received_CAN_data> getLatestValue(canid_t msg_id);
   bool writeODriveRTRFrame(canid_t msg_id);
   bool writeRTRFrame(canid_t msg_id, uint8_t size);
-  bool writeFrame(canid_t msg_id, uint8_t* data, uint8_t size);
+  bool writeFrame(canid_t msg_id, void* data, uint8_t size);
+
+  static canid_t getOdriveCANCommandId(uint8_t axis_id, uint16_t base_command_id);
 
   std::string getLogger();
 

@@ -179,9 +179,9 @@ bool QPUP_CAN::writeRTRFrame(canid_t msg_id, uint8_t size) {
   return QPUP_CAN::writeFrame(msg_id | CAN_RTR_FLAG, nullptr, size);
 }
 
-bool QPUP_CAN::writeFrame(canid_t msg_id, uint8_t* data, uint8_t size) {
+bool QPUP_CAN::writeFrame(canid_t msg_id, void* data, uint8_t size) {
   if (internal_state_ != state::ACTIVE) {
-    ROS_ERROR_STREAM_NAMED(logger_, "writeRTRFrame() called from invalid state: " << internal_state_);
+    ROS_ERROR_STREAM_NAMED(logger_, "writeFrame() called from invalid state: " << internal_state_);
     internal_state_ = state::ERROR;
     return false;
   }
@@ -214,7 +214,11 @@ bool QPUP_CAN::writeFrame(canid_t msg_id, uint8_t* data, uint8_t size) {
   return true;
 }
 
-std::string QPUP_CAN::getLogger(){
+canid_t QPUP_CAN::getOdriveCANCommandId(uint8_t axis_id, uint16_t base_command_id) {
+  return axis_id << 5 | base_command_id;
+}
+
+std::string QPUP_CAN::getLogger() {
   return logger_;
 }
 

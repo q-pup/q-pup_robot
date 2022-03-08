@@ -34,15 +34,15 @@ bool QPUPHW::init(ros::NodeHandle & /*root_nh*/, ros::NodeHandle &robot_hw_nh) {
 }
 
 void QPUPHW::read(const ros::Time & /*time*/, const ros::Duration & /*period*/) {
-  ROS_ERROR_STREAM_NAMED(name_, "read function called from " << name_
-                                                             << " class. read calls should only happen "
-                                                                "to the overloaded function.");
+  ROS_ERROR_STREAM_NAMED(logger_, "read function called from " << logger_
+                                                               << " class. read calls should only happen "
+                                                                  "to the overloaded function.");
 }
 
 void QPUPHW::write(const ros::Time & /*time*/, const ros::Duration & /*period*/) {
-  ROS_ERROR_STREAM_NAMED(name_, "write function called from " << name_
-                                                              << " class. write calls should only happen "
-                                                                 "to the overloaded function.");
+  ROS_ERROR_STREAM_NAMED(logger_, "write function called from " << logger_
+                                                                << " class. write calls should only happen "
+                                                                   "to the overloaded function.");
 }
 
 void QPUPHW::doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list,
@@ -83,10 +83,10 @@ bool QPUPHW::loadJointInfoFromParameterServer(ros::NodeHandle &robot_hw_nh) {
   XmlRpc::XmlRpcValue joints_list;
   bool param_fetched = robot_hw_nh.getParam("joints", joints_list);
   if (!param_fetched) {
-    ROS_WARN_STREAM_NAMED(name_, robot_hw_nh.getNamespace() << "/joints could not be loaded from parameter server.");
+    ROS_WARN_STREAM_NAMED(logger_, robot_hw_nh.getNamespace() << "/joints could not be loaded from parameter server.");
     return false;
   }
-  ROS_DEBUG_STREAM_NAMED(name_, robot_hw_nh.getNamespace() << "/joints loaded from parameter server.");
+  ROS_DEBUG_STREAM_NAMED(logger_, robot_hw_nh.getNamespace() << "/joints loaded from parameter server.");
   ROS_ASSERT(joints_list.getType() == XmlRpc::XmlRpcValue::TypeArray);
 
   // NOLINTNEXTLINE(modernize-loop-convert): iterator only valid for

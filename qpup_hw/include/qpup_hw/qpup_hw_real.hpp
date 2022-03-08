@@ -17,8 +17,11 @@ class QPUPHWReal : public QPUPHW {
   void read(const ros::Time &time, const ros::Duration &period) override;
   void write(const ros::Time &time, const ros::Duration &period) override;
  private:
+  bool loadOdriveConfigFromParamServer(ros::NodeHandle &robot_hw_nh);
+
   std::unique_ptr<qpup_hw::navx::AHRS> imu_;
   std::unique_ptr<qpup_utils::QPUP_CAN> can_;
+  std::map<std::string, uint8_t> odrive_axis_can_id_;
 };
 
 } // namespace qpup_hw
