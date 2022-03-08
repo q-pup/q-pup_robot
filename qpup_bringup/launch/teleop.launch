@@ -1,0 +1,5 @@
+<launch>
+  <group ns="/qpup/">
+    <include file="$(find champ_teleop)/launch/teleop.launch" pass_all_args="true"/>
+  </group>
+</launch>

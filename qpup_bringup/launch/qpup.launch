@@ -1,11 +1,11 @@
 <launch>
-    <arg name="use_realtime_kernel"
-         default="true"
-         doc="A bool that controls whether or not to set realtime thread priority and lock memory pages. This can only
+  <arg name="use_realtime_kernel"
+       default="true"
+       doc="A bool that controls whether or not to set realtime thread priority and lock memory pages. This can only
               be enabled if you are using a realtime linux kernel. Valid options are: [true, false]"/>
-    <arg name="rviz"                   default="true"/>
-    <arg name="hardware_connected"     default="true"/>
+  <arg name="rviz" default="true"/>
+  <arg name="hardware_connected" default="true"/>
 
-    <include file="$(find qpup_control)/launch/qpup_control.launch" pass_all_args="true"/>
-    <include file="$(find qpup_config)/launch/bringup.launch" pass_all_args="true"/>
+  <include file="$(find qpup_control)/launch/qpup_control.launch" pass_all_args="true"/>
+  <include file="$(find qpup_config)/launch/bringup.launch" pass_all_args="true"/>
 </launch>
