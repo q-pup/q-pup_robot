@@ -5,7 +5,7 @@
 #include "qpup_utils/qpup_can.hpp"
 
 #include <memory>
-#include <math>
+#include <math.h>
 
 namespace qpup_hw {
 
