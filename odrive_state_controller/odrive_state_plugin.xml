@@ -1,0 +1,9 @@
+<library path="lib/libodrive_state_controller">
+    <class name="odrive_state_controller/JointStateController" type="odrive_state_controller::OdriveStateController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The odrive state controller publishes the current joint state as a odrive_state_msgs/OdriveState message.
+            The odrive state controller expects a OdriveStateInterface type of hardware interface.
+        </description>
+    </class>
+</library>

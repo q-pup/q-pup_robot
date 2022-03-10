@@ -1,11 +1,10 @@
 #include "qpup_hw/qpup_hw_real.hpp"
 
-#include "tf2/LinearMath/Quaternion.h"
-#include "pluginlib/class_list_macros.hpp"
-#include "qpup_utils/qpup_params.hpp"
-
 #include <memory>
 
+#include "pluginlib/class_list_macros.hpp"
+#include "qpup_utils/qpup_params.hpp"
+#include "tf2/LinearMath/Quaternion.h"
 
 namespace qpup_hw {
 
@@ -37,7 +36,6 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
     // doesn't do anything. They're all encoded as floats, or integers with no scaling nor offset.
 
     // The following RTR Requests are not used:
-    //    QPUP_ODRIVE_GET_ENCODER_COUNT_FRAME_ID
     //    QPUP_ODRIVE_GET_SENSORLESS_ESTIMATES_FRAME_ID
 
     // Send RTR Requests
@@ -57,27 +55,33 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
         qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name], QPUP_ODRIVE_HEARTBEAT_FRAME_ID));
     if (heartbeat_frame.has_value()) {
       const auto heartbeat = std::get<qpup_odrive_heartbeat_t>(heartbeat_frame.value());
-      ROS_INFO_STREAM(joint_name << " axis_state: " << heartbeat.axis_state);
-      if (heartbeat.axis_error != 0) {
-        ROS_WARN_STREAM(joint_name << " axis_error: " << std::showbase << std::hex << heartbeat.axis_error);
-      }
-      if (heartbeat.controller_flags != 0) {
-        ROS_WARN_STREAM(joint_name << " controller_flags: " << std::showbase << std::hex << heartbeat.controller_flags);
-      }
-      if (heartbeat.encoder_flags != 0) {
-        ROS_WARN_STREAM(joint_name << " encoder_flags: " << std::showbase << std::hex << heartbeat.encoder_flags);
-      }
-      if (heartbeat.motor_flags != 0) {
-        ROS_WARN_STREAM(joint_name << " motor_flags: " << std::showbase << std::hex << heartbeat.motor_flags);
-      }
-      // TODO: do something with this. probably add interface for motor/encoder/controller fault flags and publish on
-      // ros
+
+      odrive_state_data_[joint_name].axis_error = heartbeat.axis_error;
+      odrive_state_data_[joint_name].axis_state = heartbeat.axis_state;
+      odrive_state_data_[joint_name].motor_flags = heartbeat.motor_flags;
+      odrive_state_data_[joint_name].encoder_flags = heartbeat.encoder_flags;
+      odrive_state_data_[joint_name].controller_flags = heartbeat.controller_flags;
+
+      ROS_WARN_STREAM_COND_NAMED(heartbeat.axis_error != 0, logger_,
+                                 joint_name << " axis_error: " << std::showbase << std::hex << heartbeat.axis_error);
+
+      ROS_WARN_STREAM_COND_NAMED(heartbeat.motor_flags != 0, logger_,
+                                 joint_name << " motor_flags: " << std::showbase << std::hex << heartbeat.motor_flags);
+
+      ROS_WARN_STREAM_COND_NAMED(
+          heartbeat.encoder_flags != 0, logger_,
+          joint_name << " encoder_flags: " << std::showbase << std::hex << heartbeat.encoder_flags);
+
+      ROS_WARN_STREAM_COND_NAMED(
+          heartbeat.controller_flags != 0, logger_,
+          joint_name << " controller_flags: " << std::showbase << std::hex << heartbeat.controller_flags);
     }
 
     const auto encoder_estimates_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
         odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_ENCODER_ESTIMATES_FRAME_ID));
     if (encoder_estimates_frame.has_value()) {
       const auto encoder_estimates = std::get<qpup_odrive_get_encoder_estimates_t>(encoder_estimates_frame.value());
+
       actuator_joint_states_[joint_name].actuator_velocity = encoder_estimates.vel_estimate * RADIANS_PER_ROTATION;
       actuator_joint_states_[joint_name].actuator_position = encoder_estimates.pos_estimate * RADIANS_PER_ROTATION;
     }
@@ -87,50 +91,64 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
         odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_MOTOR_ERROR_FRAME_ID));
     if (motor_errors_frame.has_value()) {
       const auto motor_errors = std::get<qpup_odrive_get_motor_error_t>(motor_errors_frame.value());
-      if (motor_errors.motor_error != 0) {
-        ROS_WARN_STREAM(joint_name << " motor_errors: " << std::showbase << std::hex << motor_errors.motor_error);
-      }
-      // TODO: do something with this. probably add interface for motor/encoder/controller fault flags and publish on
-      // ros
+
+      odrive_state_data_[joint_name].motor_error = motor_errors.motor_error;
+
+      ROS_WARN_STREAM_COND_NAMED(
+          motor_errors.motor_error != 0, logger_,
+          joint_name << " motor_errors: " << std::showbase << std::hex << motor_errors.motor_error);
     }
 
     const auto encoder_errors_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
         odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_ENCODER_ERROR_FRAME_ID));
     if (encoder_errors_frame.has_value()) {
       const auto encoder_errors = std::get<qpup_odrive_get_encoder_error_t>(encoder_errors_frame.value());
-      if (encoder_errors.encoder_error != 0) {
-        ROS_WARN_STREAM(joint_name << " motor_errors: " << std::showbase << std::hex << encoder_errors.encoder_error);
-      }
-      // TODO: do something with this. probably add interface for motor/encoder/controller fault flags and publish on
-      // ros
+
+      odrive_state_data_[joint_name].encoder_error = encoder_errors.encoder_error;
+
+      ROS_WARN_STREAM_COND_NAMED(
+          encoder_errors.encoder_error != 0, logger_,
+          joint_name << " motor_errors: " << std::showbase << std::hex << encoder_errors.encoder_error);
     }
 
     const auto sensorless_errors_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
         odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_SENSORLESS_ERROR_FRAME_ID));
     if (sensorless_errors_frame.has_value()) {
       const auto sensorless_errors = std::get<qpup_odrive_get_sensorless_error_t>(sensorless_errors_frame.value());
-      if (sensorless_errors.sensorless_error != 0) {
-        ROS_WARN_STREAM(joint_name << " sensorless_errors: " << std::showbase << std::hex
-                                   << sensorless_errors.sensorless_error);
-      }
-      // TODO: do something with this. probably add interface for motor/encoder/controller fault flags and publish on
-      // ros
+
+      odrive_state_data_[joint_name].sensorless_error = sensorless_errors.sensorless_error;
+
+      ROS_WARN_STREAM_COND_NAMED(
+          sensorless_errors.sensorless_error != 0, logger_,
+          joint_name << " sensorless_errors: " << std::showbase << std::hex << sensorless_errors.sensorless_error);
+    }
+
+    const auto iq_encoder_count_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
+        odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_ENCODER_COUNT_FRAME_ID));
+    if (iq_encoder_count_frame.has_value()) {
+      const auto encoder_count = std::get<qpup_odrive_get_encoder_count_t>(iq_encoder_count_frame.value());
+
+      odrive_state_data_[joint_name].shadow_count = encoder_count.shadow_count;
+      odrive_state_data_[joint_name].count_in_cpr = encoder_count.count_in_cpr;
     }
 
     const auto iq_frame = can_->getLatestValue(
         qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_IQ_FRAME_ID));
     if (iq_frame.has_value()) {
       const auto iq = std::get<qpup_odrive_get_iq_t>(iq_frame.value());
+
       actuator_joint_states_[joint_name].actuator_effort = iq.iq_measured * TORQUE_CONSTANT;
+
+      odrive_state_data_[joint_name].iq_setpoint = iq.iq_setpoint;
+      odrive_state_data_[joint_name].iq_measured = iq.iq_measured;
     }
 
     const auto vbus_voltage_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
         odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_VBUS_VOLTAGE_FRAME_ID));
     if (vbus_voltage_frame.has_value()) {
       const auto vbus_voltage = std::get<qpup_odrive_get_vbus_voltage_t>(vbus_voltage_frame.value());
-      (void)(vbus_voltage);
-      // TODO: do something with this. probably add interface for motor/encoder/controller fault flags and publish on
-      // ros
+
+      odrive_state_data_[joint_name].vbus_voltage = vbus_voltage.vbus_voltage;
     }
   }
   actuator_to_joint_state_interface_.propagate();
@@ -139,8 +157,7 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
   // TODO(mreynolds): Hardcoded name
   {
     tf2::Quaternion quat;
-    quat.setRPY(imu_->GetRoll() / -180.0 * M_PI,
-                imu_->GetPitch() / -180.0 * M_PI,
+    quat.setRPY(imu_->GetRoll() / -180.0 * M_PI, imu_->GetPitch() / -180.0 * M_PI,
                 imu_->GetFusedHeading() / 180.0 * M_PI /* + offset*/);
     imu_states_["imu"].orientation[0] = quat.x();
     imu_states_["imu"].orientation[1] = quat.y();
