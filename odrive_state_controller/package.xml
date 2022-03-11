@@ -26,7 +26,7 @@
     <depend>qpup_hw</depend>
 
     <export>
-        <hardware_interface plugin="${prefix}/odrive_state_plugin.xml"/>
+        <hardware_interface plugin="${prefix}/odrive_state_controller_plugin.xml"/>
     </export>
 
 </package>

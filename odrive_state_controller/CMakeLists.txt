@@ -61,6 +61,6 @@ install(TARGETS ${PROJECT_NAME}
         )
 
 # Install plugins
-install(FILES odrive_state_plugin.xml
+install(FILES odrive_state_controller_plugin.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         )
