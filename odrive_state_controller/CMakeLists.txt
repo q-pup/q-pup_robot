@@ -8,6 +8,7 @@ endif ()
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS
         controller_interface
+        hardware_interface
         odrive_state_msgs
         pluginlib
         qpup_hw
@@ -23,6 +24,7 @@ catkin_package(
         ${PROJECT_NAME}
         CATKIN_DEPENDS
         controller_interface
+        hardware_interface
         odrive_state_msgs
         qpup_hw
         realtime_tools
