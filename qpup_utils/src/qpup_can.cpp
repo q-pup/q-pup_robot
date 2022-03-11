@@ -271,10 +271,11 @@ void QPUP_CAN::readSocketTask() {
             UNPACK_ODRIVE_MSG_STRUCT(get_vbus_voltage, data, frame);
             break;
           }
-
-          case 0x81109216:
+          
+          case (0x81109216 & CAN_ERR_MASK) : {
             // FIXME: Battery UAVCAN frame not handled
             break;
+          }
 
           default:
             ROS_ERROR_STREAM_NAMED(

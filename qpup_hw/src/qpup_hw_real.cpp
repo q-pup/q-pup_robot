@@ -45,6 +45,8 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
                                                                           QPUP_ODRIVE_GET_ENCODER_ERROR_FRAME_ID));
     can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
                                                                           QPUP_ODRIVE_GET_SENSORLESS_ERROR_FRAME_ID));
+    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+                                                                          QPUP_ODRIVE_GET_ENCODER_COUNT_FRAME_ID));
     can_->writeODriveRTRFrame(
         qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_IQ_FRAME_ID));
     can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
@@ -64,17 +66,6 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
 
       ROS_WARN_STREAM_COND_NAMED(heartbeat.axis_error != 0, logger_,
                                  joint_name << " axis_error: " << std::showbase << std::hex << heartbeat.axis_error);
-
-      ROS_WARN_STREAM_COND_NAMED(heartbeat.motor_flags != 0, logger_,
-                                 joint_name << " motor_flags: " << std::showbase << std::hex << heartbeat.motor_flags);
-
-      ROS_WARN_STREAM_COND_NAMED(
-          heartbeat.encoder_flags != 0, logger_,
-          joint_name << " encoder_flags: " << std::showbase << std::hex << heartbeat.encoder_flags);
-
-      ROS_WARN_STREAM_COND_NAMED(
-          heartbeat.controller_flags != 0, logger_,
-          joint_name << " controller_flags: " << std::showbase << std::hex << heartbeat.controller_flags);
     }
 
     const auto encoder_estimates_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
@@ -123,10 +114,10 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
           joint_name << " sensorless_errors: " << std::showbase << std::hex << sensorless_errors.sensorless_error);
     }
 
-    const auto iq_encoder_count_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
+    const auto encoder_count_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
         odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_ENCODER_COUNT_FRAME_ID));
-    if (iq_encoder_count_frame.has_value()) {
-      const auto encoder_count = std::get<qpup_odrive_get_encoder_count_t>(iq_encoder_count_frame.value());
+    if (encoder_count_frame.has_value()) {
+      const auto encoder_count = std::get<qpup_odrive_get_encoder_count_t>(encoder_count_frame.value());
 
       odrive_state_data_[joint_name].shadow_count = encoder_count.shadow_count;
       odrive_state_data_[joint_name].count_in_cpr = encoder_count.count_in_cpr;
