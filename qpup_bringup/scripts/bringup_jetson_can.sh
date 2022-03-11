@@ -11,6 +11,18 @@ sudo modprobe mttcan
 sudo ip link set can0 type can bitrate 1000000
 sudo ip link set can1 type can bitrate 1000000
 
+if sudo ip link set can0 txqueuelen 10000; then
+  echo "Successfully set can0 interface to txqueuelen 10000"
+else
+  echo "Failure, exit status: $?"
+fi
+
+if sudo ip link set can1 txqueuelen 10000; then
+  echo "Successfully set can1 interface to txqueuelen 10000"
+else
+  echo "Failure, exit status: $?"
+fi
+
 sudo ip link set up can0
 sudo ip link set up can1
 
