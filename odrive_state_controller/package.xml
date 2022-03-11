@@ -7,14 +7,14 @@
     <version>0.1.0</version>
     <description>Ros controller to publish data from odrives</description>
 
-    <maintainer email="melvin.mc.wang@gmail.com">Melvin wang</maintainer>
+    <maintainer email="melvin.mc.wang@gmail.com">Melvin Wang</maintainer>
     <maintainer email="mtreynolds@uwaterloo.ca">Matt Reynolds</maintainer>
     <maintainer email="wrraftus@uwaterloo.ca">Walter Raftus</maintainer>
     <maintainer email="djhemphill@uwaterloo.ca">Dawson Hemphill</maintainer>
 
     <license>MIT</license>
 
-    <author email="melvin.mc.wang@gmail.com">Melvin wang</author>
+    <author email="melvin.mc.wang@gmail.com">Melvin Wang</author>
 
     <buildtool_depend>catkin</buildtool_depend>
 

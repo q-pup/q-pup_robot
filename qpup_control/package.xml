@@ -8,7 +8,7 @@
   <description>Package containing qpup's top-level control loops, launch files and the combined hw node
   </description>
 
-  <maintainer email="melvin.mc.wang@gmail.com">Melvin wang</maintainer>
+  <maintainer email="melvin.mc.wang@gmail.com">Melvin Wang</maintainer>
   <maintainer email="mtreynolds@uwaterloo.ca">Matt Reynolds</maintainer>
   <maintainer email="wrraftus@uwaterloo.ca">Walter Raftus</maintainer>
   <maintainer email="djhemphill@uwaterloo.ca">Dawson Hemphill</maintainer>
