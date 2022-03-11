@@ -1,0 +1,6 @@
+<launch>
+  <include file="$(find qpup_bringup)/launch/qpup.launch">
+    <arg name="use_realtime_kernel" value="false" />
+    <arg name="rviz" value="false" />
+  </include>
+</launch>

@@ -42,7 +42,7 @@ void QPUPControlLoop::update() {
           << " seconds. Resetting controllers.");
   controller_manager_->update(time_now, control_loop_period, reset_controllers);
 
-  qpup_hw_->write(time_now, control_loop_period);
+  // qpup_hw_->write(time_now, control_loop_period);
 }
 
 } // namespace qpup_control
