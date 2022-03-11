@@ -20,7 +20,7 @@ catkin_package(
         include
         LIBRARIES
         ${PROJECT_NAME}
-    ${PROJECT_NAME}_navx
+        ${PROJECT_NAME}_navx
     CATKIN_DEPENDS
         hardware_interface
         joint_limits_interface
@@ -50,7 +50,7 @@ add_library(${PROJECT_NAME}_navx
     src/navx/SerialIO.cpp
     )
 target_compile_features(${PROJECT_NAME}_navx PUBLIC c_std_11 cxx_std_17)
-target_link_libraries(${PROJECT_NAME}_navx ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(${PROJECT_NAME}_navx ${CMAKE_THREAD_LIBS_INIT} ${catkin_LIBRARIES})
 
 add_executable(navx_test
         src/navx/TimeStamp.cpp
