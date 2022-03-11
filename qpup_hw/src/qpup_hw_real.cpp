@@ -19,7 +19,8 @@ bool QPUPHWReal::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
 
   // TODO(mreynolds): Load interface from yaml
   // imu_ = std::make_unique<qpup_hw::navx::AHRS>(std::string("/dev/ttyACM0"));
-  can_ = std::make_unique<qpup_utils::QPUP_CAN>(
+//  can_ = std::make_unique<qpup_utils::QPUP_CAN>(
+    can_ = std::make_unique<qpup_utils::QPUP_CAN_FAKE>(
       __BYTE_ORDER__, qpup_utils::getParam<std::string>(root_nh, logger_, "can_interface_name", "can0"));
 
   return can_->configure() && can_->activate();
@@ -141,6 +142,13 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
 
       odrive_state_data_[joint_name].vbus_voltage = vbus_voltage.vbus_voltage;
     }
+
+    // Hacks
+    if (joint_name == "rf_lower_leg_joint" || joint_name == "lf_lower_leg_joint") {
+      // Disconnected
+      actuator_joint_states_[joint_name].actuator_velocity = 0;
+      actuator_joint_states_[joint_name].actuator_position = actuator_joint_commands_[joint_name].actuator_data;
+    }
   }
   actuator_to_joint_state_interface_.propagate();
 
@@ -167,6 +175,12 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
 
 void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*period*/) {
   for (const auto &joint_name : joint_names_) {
+    // Hacks
+    if (joint_name == "rf_lower_leg_joint" || joint_name == "lf_lower_leg_joint") {
+      // Disconnected
+      break;
+    }
+
     bool successful_joint_write = false;
     uint8_t outgoing_can_data_buffer[CAN_MAX_DLEN];
 
