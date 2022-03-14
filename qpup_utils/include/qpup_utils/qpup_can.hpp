@@ -86,7 +86,6 @@ class QPUP_CAN {
                    qpup_odrive_get_sensorless_error_t, qpup_odrive_get_encoder_estimates_t,
                    qpup_odrive_get_encoder_count_t, qpup_odrive_get_iq_t, qpup_odrive_get_sensorless_estimates_t,
                    qpup_odrive_get_vbus_voltage_t>;
-  explicit QPUP_CAN() = delete;
 
   /**
    * QPUP_CAN
@@ -97,19 +96,22 @@ class QPUP_CAN {
   explicit QPUP_CAN(int default_endianess, std::string can_interface_name);
   virtual ~QPUP_CAN();
 
-  bool configure();
-  bool activate();
-  bool deactivate();
-  bool cleanup();
+  virtual bool configure();
+  virtual bool activate();
+  virtual bool deactivate();
+  virtual bool cleanup();
 
-  std::optional<received_CAN_data> getLatestValue(canid_t msg_id);
-  bool writeODriveRTRFrame(canid_t msg_id);
-  bool writeRTRFrame(canid_t msg_id, uint8_t size);
-  bool writeFrame(canid_t msg_id, void* data, uint8_t size);
+  virtual std::optional<received_CAN_data> getLatestValue(canid_t msg_id);
+  virtual bool writeODriveRTRFrame(canid_t msg_id);
+  virtual bool writeRTRFrame(canid_t msg_id, uint8_t size);
+  virtual bool writeFrame(canid_t msg_id, void* data, uint8_t size);
 
   static canid_t getOdriveCANCommandId(uint8_t axis_id, uint16_t base_command_id);
 
   std::string getLogger();
+
+ protected:
+  QPUP_CAN(){}
 
  private:
   void readSocketTask();
@@ -154,6 +156,37 @@ class QPUP_CAN {
 
   // FIXME: Upstream odrive firmware seems to hardcode rtr dlc to 8, even when messages are smaller
   static constexpr uint8_t ODRIVE_RTR_DLC{8};
+};
+
+class QPUP_CAN_FAKE: public QPUP_CAN {
+ public:
+  explicit QPUP_CAN_FAKE(int /*default_endianess*/, std::string /*can_interface_name*/){}
+
+  bool configure() override {
+      return true;
+  };
+  bool activate() override {
+    return true;
+  };
+  bool deactivate() override {
+    return true;
+  };
+  bool cleanup() override {
+    return true;
+  };
+
+  std::optional<received_CAN_data> getLatestValue(canid_t msg_id) override {
+      return std::nullopt;
+  };
+  bool writeODriveRTRFrame(canid_t msg_id) override {
+      return true;
+  };
+  bool writeRTRFrame(canid_t msg_id, uint8_t size) override {
+      return true;
+  };
+  bool writeFrame(canid_t msg_id, void* data, uint8_t size) override {
+    return true;
+  }
 };
 
 }  // namespace qpup_utils

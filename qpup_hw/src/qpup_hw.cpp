@@ -125,6 +125,7 @@ void QPUPHW::registerStateInterfacesAndTransmissions(const std::string &joint_na
   actuator_to_joint_state_interface_.registerHandle(actuator_to_joint_state_handle);
 
   // Register OdriveStateHandle to the OdriveStateInterface
+  void(odrive_state_data_[joint_name].do_not_clear_errors_flag.test_and_set());
   OdriveStateHandle odrive_state_handle(
       joint_name, &odrive_state_data_[joint_name].axis_error, &odrive_state_data_[joint_name].axis_state,
       &odrive_state_data_[joint_name].motor_flags, &odrive_state_data_[joint_name].encoder_flags,
@@ -132,7 +133,7 @@ void QPUPHW::registerStateInterfacesAndTransmissions(const std::string &joint_na
       &odrive_state_data_[joint_name].encoder_error, &odrive_state_data_[joint_name].sensorless_error,
       &odrive_state_data_[joint_name].shadow_count, &odrive_state_data_[joint_name].count_in_cpr,
       &odrive_state_data_[joint_name].iq_setpoint, &odrive_state_data_[joint_name].iq_measured,
-      &odrive_state_data_[joint_name].vbus_voltage);
+      &odrive_state_data_[joint_name].vbus_voltage, &odrive_state_data_[joint_name].do_not_clear_errors_flag);
   odrive_state_interface_.registerHandle(odrive_state_handle);
 }
 

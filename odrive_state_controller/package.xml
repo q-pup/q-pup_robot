@@ -7,26 +7,27 @@
     <version>0.1.0</version>
     <description>Ros controller to publish data from odrives</description>
 
-    <maintainer email="melvin.mc.wang@gmail.com">Melvin wang</maintainer>
+    <maintainer email="melvin.mc.wang@gmail.com">Melvin Wang</maintainer>
     <maintainer email="mtreynolds@uwaterloo.ca">Matt Reynolds</maintainer>
     <maintainer email="wrraftus@uwaterloo.ca">Walter Raftus</maintainer>
     <maintainer email="djhemphill@uwaterloo.ca">Dawson Hemphill</maintainer>
 
     <license>MIT</license>
 
-    <author email="melvin.mc.wang@gmail.com">Melvin wang</author>
+    <author email="melvin.mc.wang@gmail.com">Melvin Wang</author>
 
     <buildtool_depend>catkin</buildtool_depend>
 
     <depend>controller_interface</depend>
-    <depend>realtime_tools</depend>
-    <depend>roscpp</depend>
     <depend>odrive_state_msgs</depend>
     <depend>pluginlib</depend>
     <depend>qpup_hw</depend>
+    <depend>realtime_tools</depend>
+    <depend>roscpp</depend>
+    <depend>std_srvs</depend>
 
     <export>
-        <hardware_interface plugin="${prefix}/odrive_state_plugin.xml"/>
+        <controller_interface plugin="${prefix}/odrive_state_controller_plugin.xml"/>
     </export>
 
 </package>

@@ -1,11 +1,12 @@
 #pragma once
 
+#include <math.h>
+
+#include <memory>
+
 #include "qpup_hw/navx/AHRS.h"
 #include "qpup_hw/qpup_hw.hpp"
 #include "qpup_utils/qpup_can.hpp"
-
-#include <memory>
-#include <math.h>
 
 namespace qpup_hw {
 
@@ -29,4 +30,4 @@ class QPUPHWReal : public QPUPHW {
   static constexpr double RADIANS_PER_ROTATION{2 * M_PI};
 };
 
-} // namespace qpup_hw
+}  // namespace qpup_hw

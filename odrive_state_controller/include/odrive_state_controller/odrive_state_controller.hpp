@@ -4,6 +4,8 @@
 #include "odrive_state_msgs/OdriveState.h"
 #include "qpup_hw/odrive_state_interface.hpp"
 #include "realtime_tools/realtime_publisher.h"
+#include "ros/ros.h"
+#include "std_srvs/Empty.h"
 
 namespace odrive_state_controller {
 class OdriveStateController : public controller_interface::Controller<qpup_hw::OdriveStateInterface> {
@@ -18,8 +20,12 @@ class OdriveStateController : public controller_interface::Controller<qpup_hw::O
  private:
   std::vector<qpup_hw::OdriveStateHandle> odrive_state_;
   std::shared_ptr<realtime_tools::RealtimePublisher<odrive_state_msgs::OdriveState> > realtime_pub_;
+  ros::ServiceServer clear_errors_;
+
   ros::Time last_publish_time_;
   double publish_rate_;
   unsigned int num_odrive_axis_;
+
+  bool clearErrorsCallback(std_srvs::Empty::Request& /* request */, std_srvs::Empty::Response& /*response*/);
 };
 }  // namespace odrive_state_controller

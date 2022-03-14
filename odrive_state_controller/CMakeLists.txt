@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
         qpup_hw
         realtime_tools
         roscpp
+        std_srvs
         )
 
 # Declare a catkin package
@@ -27,6 +28,7 @@ catkin_package(
         qpup_hw
         realtime_tools
         roscpp
+        std_srvs
 )
 
 
@@ -39,7 +41,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 # Declare and link the C++ Library
 add_library(${PROJECT_NAME}
-        src/odrive_state_controller.cpp
+        src/${PROJECT_NAME}.cpp
         )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
@@ -61,6 +63,6 @@ install(TARGETS ${PROJECT_NAME}
         )
 
 # Install plugins
-install(FILES odrive_state_plugin.xml
+install(FILES ${PROJECT_NAME}_plugin.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
         )

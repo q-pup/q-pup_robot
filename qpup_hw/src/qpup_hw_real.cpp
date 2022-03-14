@@ -18,8 +18,9 @@ bool QPUPHWReal::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
   }
 
   // TODO(mreynolds): Load interface from yaml
-  imu_ = std::make_unique<qpup_hw::navx::AHRS>("/dev/ttyACM0");
-  can_ = std::make_unique<qpup_utils::QPUP_CAN>(
+   imu_ = std::make_unique<qpup_hw::navx::AHRS>(std::string("/dev/ttyACM0"));
+  //  can_ = std::make_unique<qpup_utils::QPUP_CAN>(
+  can_ = std::make_unique<qpup_utils::QPUP_CAN_FAKE>(
       __BYTE_ORDER__, qpup_utils::getParam<std::string>(root_nh, logger_, "can_interface_name", "can0"));
 
   return can_->configure() && can_->activate();
@@ -45,6 +46,8 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
                                                                           QPUP_ODRIVE_GET_ENCODER_ERROR_FRAME_ID));
     can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
                                                                           QPUP_ODRIVE_GET_SENSORLESS_ERROR_FRAME_ID));
+    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+                                                                          QPUP_ODRIVE_GET_ENCODER_COUNT_FRAME_ID));
     can_->writeODriveRTRFrame(
         qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_IQ_FRAME_ID));
     can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
@@ -64,17 +67,6 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
 
       ROS_WARN_STREAM_COND_NAMED(heartbeat.axis_error != 0, logger_,
                                  joint_name << " axis_error: " << std::showbase << std::hex << heartbeat.axis_error);
-
-      ROS_WARN_STREAM_COND_NAMED(heartbeat.motor_flags != 0, logger_,
-                                 joint_name << " motor_flags: " << std::showbase << std::hex << heartbeat.motor_flags);
-
-      ROS_WARN_STREAM_COND_NAMED(
-          heartbeat.encoder_flags != 0, logger_,
-          joint_name << " encoder_flags: " << std::showbase << std::hex << heartbeat.encoder_flags);
-
-      ROS_WARN_STREAM_COND_NAMED(
-          heartbeat.controller_flags != 0, logger_,
-          joint_name << " controller_flags: " << std::showbase << std::hex << heartbeat.controller_flags);
     }
 
     const auto encoder_estimates_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
@@ -123,10 +115,10 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
           joint_name << " sensorless_errors: " << std::showbase << std::hex << sensorless_errors.sensorless_error);
     }
 
-    const auto iq_encoder_count_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
+    const auto encoder_count_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
         odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_ENCODER_COUNT_FRAME_ID));
-    if (iq_encoder_count_frame.has_value()) {
-      const auto encoder_count = std::get<qpup_odrive_get_encoder_count_t>(iq_encoder_count_frame.value());
+    if (encoder_count_frame.has_value()) {
+      const auto encoder_count = std::get<qpup_odrive_get_encoder_count_t>(encoder_count_frame.value());
 
       odrive_state_data_[joint_name].shadow_count = encoder_count.shadow_count;
       odrive_state_data_[joint_name].count_in_cpr = encoder_count.count_in_cpr;
@@ -150,32 +142,57 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
 
       odrive_state_data_[joint_name].vbus_voltage = vbus_voltage.vbus_voltage;
     }
+
+    // Hacks
+    if (joint_name == "rf_lower_leg_joint" || joint_name == "lf_lower_leg_joint") {
+      // Disconnected
+      actuator_joint_states_[joint_name].actuator_velocity = 0;
+      actuator_joint_states_[joint_name].actuator_position = actuator_joint_commands_[joint_name].actuator_data;
+    }
   }
   actuator_to_joint_state_interface_.propagate();
 
   // Read IMU state
   // TODO(mreynolds): Hardcoded name
-  {
-    tf2::Quaternion quat;
-    quat.setRPY(imu_->GetRoll() / -180.0 * M_PI, imu_->GetPitch() / -180.0 * M_PI,
-                imu_->GetFusedHeading() / 180.0 * M_PI /* + offset*/);
-    imu_states_["imu"].orientation[0] = quat.x();
-    imu_states_["imu"].orientation[1] = quat.y();
-    imu_states_["imu"].orientation[2] = quat.z();
-    imu_states_["imu"].orientation[3] = quat.w();
+  // {
+  //   tf2::Quaternion quat;
+  //   quat.setRPY(imu_->GetRoll() / -180.0 * M_PI, imu_->GetPitch() / -180.0 * M_PI,
+  //               imu_->GetFusedHeading() / 180.0 * M_PI /* + offset*/);
+  //   imu_states_["imu"].orientation[0] = quat.x();
+  //   imu_states_["imu"].orientation[1] = quat.y();
+  //   imu_states_["imu"].orientation[2] = quat.z();
+  //   imu_states_["imu"].orientation[3] = quat.w();
 
-    imu_states_["imu"].angular_velocity[0] = imu_->GetRawGyroX() / 180.0 * M_PI;
-    imu_states_["imu"].angular_velocity[1] = imu_->GetRawGyroY() / 180.0 * M_PI;
-    imu_states_["imu"].angular_velocity[2] = imu_->GetRawGyroZ() / 180.0 * M_PI;
+  //   imu_states_["imu"].angular_velocity[0] = imu_->GetRawGyroX() / 180.0 * M_PI;
+  //   imu_states_["imu"].angular_velocity[1] = imu_->GetRawGyroY() / 180.0 * M_PI;
+  //   imu_states_["imu"].angular_velocity[2] = imu_->GetRawGyroZ() / 180.0 * M_PI;
 
-    imu_states_["imu"].linear_acceleration[0] = imu_->GetRawAccelX() * 9.81;
-    imu_states_["imu"].linear_acceleration[1] = imu_->GetRawAccelY() * 9.81;
-    imu_states_["imu"].linear_acceleration[2] = imu_->GetRawAccelZ() * 9.81;
-  }
+  //   imu_states_["imu"].linear_acceleration[0] = imu_->GetRawAccelX() * 9.81;
+  //   imu_states_["imu"].linear_acceleration[1] = imu_->GetRawAccelY() * 9.81;
+  //   imu_states_["imu"].linear_acceleration[2] = imu_->GetRawAccelZ() * 9.81;
+  // }
 }
 
 void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*period*/) {
   for (const auto &joint_name : joint_names_) {
+    // Hacks
+    if (joint_name == "rf_lower_leg_joint" || joint_name == "lf_lower_leg_joint") {
+      // Disconnected
+      break;
+    }
+
+    if (!odrive_state_data_[joint_name].do_not_clear_errors_flag.test_and_set()) {
+      qpup_odrive_clear_errors_t clear_errors_message{};
+
+      if (can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+                                                                       QPUP_ODRIVE_CLEAR_ERRORS_FRAME_ID),
+                           &clear_errors_message, 0)) {
+        ROS_INFO_STREAM_NAMED(logger_, "Cleared Odrive Errors on " << joint_name << "!");
+      } else {
+        ROS_ERROR_STREAM_NAMED(logger_, "Failed to write clear errors command to " << joint_name << ".");
+      }
+    }
+
     bool successful_joint_write = false;
     uint8_t outgoing_can_data_buffer[CAN_MAX_DLEN];
 

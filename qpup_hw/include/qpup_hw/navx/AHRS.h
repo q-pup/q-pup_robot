@@ -121,7 +121,7 @@ private:
     void *callback_contexts[MAX_NUM_CALLBACKS];
 
 public:
-    AHRS(std::string serial_port_id);
+    explicit AHRS(std::string serial_port_id);
 
     AHRS(std::string serial_port_id, AHRS::SerialDataType data_type, uint8_t update_rate_hz);
 

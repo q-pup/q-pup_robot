@@ -56,6 +56,8 @@ class QPUPHW : public hardware_interface::RobotHW {
     float iq_setpoint;
     float iq_measured;
     float vbus_voltage;
+
+    std::atomic_flag do_not_clear_errors_flag;
   };
 
   bool init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) override;

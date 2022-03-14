@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(qpup_hw)
 
 if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif ()
 
 find_package(catkin REQUIRED COMPONENTS
@@ -20,7 +20,7 @@ catkin_package(
         include
         LIBRARIES
         ${PROJECT_NAME}
-    ${PROJECT_NAME}_navx
+        ${PROJECT_NAME}_navx
     CATKIN_DEPENDS
         hardware_interface
         joint_limits_interface
@@ -40,7 +40,7 @@ add_library(${PROJECT_NAME}
     src/${PROJECT_NAME}_real.cpp
     )
 target_compile_features(${PROJECT_NAME} PUBLIC c_std_11 cxx_std_17)
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_navx ${catkin_LIBRARIES})
 
 add_library(${PROJECT_NAME}_navx
     src/navx/AHRS.cpp
