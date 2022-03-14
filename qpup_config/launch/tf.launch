@@ -1,0 +1,22 @@
+<launch>
+    <group ns="zed_camera_center_tf">
+        <arg name="X" default="$(eval 0.34805662576-(0.033/2))"/>
+        <arg name="Y" default="0"/>
+        <arg name="Z" default="0.01048490508"/>
+        <arg name="yaw" default="0"/>
+        <arg name="pitch" default="0"/>
+        <arg name="roll" default="pi"/>
+        <node pkg="tf2_ros" type="static_transform_publisher" name="broadcaster" args="$(arg X) $(arg Y) $(arg Z) $(arg yaw) $(arg pitch) $(arg roll) base_link zed_camera_center"/>
+    </group>
+
+    <group ns="imu_tf">
+        <!-- TODO: Determine TF -->
+        <arg name="X" default="0"/>
+        <arg name="Y" default="0.10"/>
+        <arg name="Z" default="0.10"/>
+        <arg name="yaw" default="0"/>
+        <arg name="pitch" default="0"/>
+        <arg name="roll" default="0"/>
+        <node pkg="tf2_ros" type="static_transform_publisher" name="broadcaster" args="$(arg X) $(arg Y) $(arg Z) $(arg yaw) $(arg pitch) $(arg roll) base_link imu_link"/>
+    </group>
+</launch>
