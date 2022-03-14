@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "qpup_utils/qpup_can.hpp"
-#include "qpup_generated/qpup_can_generated.h"
+#include "qpup_utils/qpup_generated/qpup_can_generated.h"
 
 TEST(TestSuite, testCase1) {
   qpup_utils::QPUP_CAN can(__BYTE_ORDER__, "can0");

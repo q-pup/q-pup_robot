@@ -30,7 +30,7 @@
 
 #include <string.h>
 
-#include "qpup_generated/qpup_can_generated.h"
+#include "qpup_utils/qpup_generated/qpup_can_generated.h"
 
 static inline uint8_t pack_left_shift_u8(
     uint8_t value,
