@@ -40,7 +40,7 @@ add_library(${PROJECT_NAME}
     src/${PROJECT_NAME}_real.cpp
     )
 target_compile_features(${PROJECT_NAME} PUBLIC c_std_11 cxx_std_17)
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_navx ${catkin_LIBRARIES})
 
 add_library(${PROJECT_NAME}_navx
     src/navx/AHRS.cpp
@@ -50,7 +50,7 @@ add_library(${PROJECT_NAME}_navx
     src/navx/SerialIO.cpp
     )
 target_compile_features(${PROJECT_NAME}_navx PUBLIC c_std_11 cxx_std_17)
-target_link_libraries(${PROJECT_NAME}_navx ${CMAKE_THREAD_LIBS_INIT} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_navx ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(navx_test
         src/navx/TimeStamp.cpp

@@ -1,11 +1,12 @@
 #pragma once
 
+#include <math.h>
+
+#include <memory>
+
 #include "qpup_hw/navx/AHRS.h"
 #include "qpup_hw/qpup_hw.hpp"
 #include "qpup_utils/qpup_can.hpp"
-
-#include <memory>
-#include <math.h>
 
 namespace qpup_hw {
 
@@ -21,7 +22,7 @@ class QPUPHWReal : public QPUPHW {
  private:
   bool loadOdriveConfigFromParamServer(ros::NodeHandle &robot_hw_nh);
 
-  // std::unique_ptr<qpup_hw::navx::AHRS> imu_;
+  std::unique_ptr<qpup_hw::navx::AHRS> imu_;
   std::unique_ptr<qpup_utils::QPUP_CAN> can_;
   std::map<std::string, uint8_t> odrive_axis_can_id_;
 
@@ -29,4 +30,4 @@ class QPUPHWReal : public QPUPHW {
   static constexpr double RADIANS_PER_ROTATION{2 * M_PI};
 };
 
-} // namespace qpup_hw
+}  // namespace qpup_hw
