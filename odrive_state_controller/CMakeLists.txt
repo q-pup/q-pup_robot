@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
         qpup_hw
         realtime_tools
         roscpp
+        std_srvs
         )
 
 # Declare a catkin package
@@ -27,6 +28,7 @@ catkin_package(
         qpup_hw
         realtime_tools
         roscpp
+        std_srvs
 )
 
 

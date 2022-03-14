@@ -19,8 +19,8 @@ bool QPUPHWReal::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
 
   // TODO(mreynolds): Load interface from yaml
   // imu_ = std::make_unique<qpup_hw::navx::AHRS>(std::string("/dev/ttyACM0"));
-//  can_ = std::make_unique<qpup_utils::QPUP_CAN>(
-    can_ = std::make_unique<qpup_utils::QPUP_CAN_FAKE>(
+  //  can_ = std::make_unique<qpup_utils::QPUP_CAN>(
+  can_ = std::make_unique<qpup_utils::QPUP_CAN_FAKE>(
       __BYTE_ORDER__, qpup_utils::getParam<std::string>(root_nh, logger_, "can_interface_name", "can0"));
 
   return can_->configure() && can_->activate();
@@ -179,6 +179,18 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
     if (joint_name == "rf_lower_leg_joint" || joint_name == "lf_lower_leg_joint") {
       // Disconnected
       break;
+    }
+
+    if (!odrive_state_data_[joint_name].do_not_clear_errors_flag.test_and_set()) {
+      qpup_odrive_clear_errors_t clear_errors_message{};
+
+      if (can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+                                                                       QPUP_ODRIVE_CLEAR_ERRORS_FRAME_ID),
+                           &clear_errors_message, 0)) {
+        ROS_INFO_STREAM_NAMED(logger_, "Cleared Odrive Errors on " << joint_name << "!");
+      } else {
+        ROS_ERROR_STREAM_NAMED(logger_, "Failed to write clear errors command to " << joint_name << ".");
+      }
     }
 
     bool successful_joint_write = false;

@@ -49,6 +49,9 @@ bool OdriveStateController::init(qpup_hw::OdriveStateInterface* hw, ros::NodeHan
     realtime_pub_->msg_.vbus_voltage.push_back(0.0);
   }
 
+  // Clear errors service
+  clear_errors_ = controller_nh.advertiseService("clear_errors", &OdriveStateController::clearErrorsCallback, this);
+
   return true;
 }
 
@@ -84,6 +87,14 @@ void OdriveStateController::update(const ros::Time& time, const ros::Duration& /
 }
 
 void OdriveStateController::stopping(const ros::Time& /*time*/) {}
+
+bool OdriveStateController::clearErrorsCallback(std_srvs::Empty::Request& /* request */,
+                                                std_srvs::Empty::Response& /*response*/) {
+  for (unsigned i = 0; i < num_odrive_axis_; i++) {
+    odrive_state_[i].triggerClearErrors();
+  }
+  return 1U;
+}
 
 }  // namespace odrive_state_controller
 

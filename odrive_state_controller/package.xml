@@ -19,11 +19,12 @@
     <buildtool_depend>catkin</buildtool_depend>
 
     <depend>controller_interface</depend>
-    <depend>realtime_tools</depend>
-    <depend>roscpp</depend>
     <depend>odrive_state_msgs</depend>
     <depend>pluginlib</depend>
     <depend>qpup_hw</depend>
+    <depend>realtime_tools</depend>
+    <depend>roscpp</depend>
+    <depend>std_srvs</depend>
 
     <export>
         <controller_interface plugin="${prefix}/odrive_state_controller_plugin.xml"/>
