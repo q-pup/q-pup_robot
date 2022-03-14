@@ -19,8 +19,7 @@ bool QPUPHWReal::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
 
   // TODO(mreynolds): Load interface from yaml
   imu_ = std::make_unique<qpup_hw::navx::AHRS>(std::string("/dev/ttyACM0"));
-  //  can_ = std::make_unique<qpup_utils::QPUP_CAN>(
-  can_ = std::make_unique<qpup_utils::QPUP_CAN_FAKE>(
+  can_ = std::make_unique<qpup_utils::QPUP_CAN>(
       __BYTE_ORDER__, qpup_utils::getParam<std::string>(root_nh, logger_, "can_interface_name", "can0"));
 
   if (!(can_->configure() && can_->activate())) {
