@@ -18,9 +18,8 @@ bool QPUPHWReal::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
   }
 
   // TODO(mreynolds): Load interface from yaml
-   imu_ = std::make_unique<qpup_hw::navx::AHRS>(std::string("/dev/ttyACM0"));
-  //  can_ = std::make_unique<qpup_utils::QPUP_CAN>(
-  can_ = std::make_unique<qpup_utils::QPUP_CAN_FAKE>(
+  imu_ = std::make_unique<qpup_hw::navx::AHRS>(std::string("/dev/ttyACM0"));
+  can_ = std::make_unique<qpup_utils::QPUP_CAN>(
       __BYTE_ORDER__, qpup_utils::getParam<std::string>(root_nh, logger_, "can_interface_name", "can0"));
 
   return can_->configure() && can_->activate();
@@ -154,23 +153,23 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
 
   // Read IMU state
   // TODO(mreynolds): Hardcoded name
-   {
-     tf2::Quaternion quat;
-     quat.setRPY(imu_->GetRoll() / -180.0 * M_PI, imu_->GetPitch() / -180.0 * M_PI,
-                 imu_->GetFusedHeading() / 180.0 * M_PI /* + offset*/);
-     imu_states_["imu"].orientation[0] = quat.x();
-     imu_states_["imu"].orientation[1] = quat.y();
-     imu_states_["imu"].orientation[2] = quat.z();
-     imu_states_["imu"].orientation[3] = quat.w();
+  {
+    tf2::Quaternion quat;
+    quat.setRPY(imu_->GetRoll() / -180.0 * M_PI, imu_->GetPitch() / -180.0 * M_PI,
+                imu_->GetFusedHeading() / 180.0 * M_PI /* + offset*/);
+    imu_states_["imu"].orientation[0] = quat.x();
+    imu_states_["imu"].orientation[1] = quat.y();
+    imu_states_["imu"].orientation[2] = quat.z();
+    imu_states_["imu"].orientation[3] = quat.w();
 
-     imu_states_["imu"].angular_velocity[0] = imu_->GetRawGyroX() / 180.0 * M_PI;
-     imu_states_["imu"].angular_velocity[1] = imu_->GetRawGyroY() / 180.0 * M_PI;
-     imu_states_["imu"].angular_velocity[2] = imu_->GetRawGyroZ() / 180.0 * M_PI;
+    imu_states_["imu"].angular_velocity[0] = imu_->GetRawGyroX() / 180.0 * M_PI;
+    imu_states_["imu"].angular_velocity[1] = imu_->GetRawGyroY() / 180.0 * M_PI;
+    imu_states_["imu"].angular_velocity[2] = imu_->GetRawGyroZ() / 180.0 * M_PI;
 
-     imu_states_["imu"].linear_acceleration[0] = imu_->GetRawAccelX() * 9.81;
-     imu_states_["imu"].linear_acceleration[1] = imu_->GetRawAccelY() * 9.81;
-     imu_states_["imu"].linear_acceleration[2] = imu_->GetRawAccelZ() * 9.81;
-   }
+    imu_states_["imu"].linear_acceleration[0] = imu_->GetRawAccelX() * 9.81;
+    imu_states_["imu"].linear_acceleration[1] = imu_->GetRawAccelY() * 9.81;
+    imu_states_["imu"].linear_acceleration[2] = imu_->GetRawAccelZ() * 9.81;
+  }
 }
 
 void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*period*/) {
