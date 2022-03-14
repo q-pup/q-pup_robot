@@ -24,7 +24,6 @@
     <depend>odrive_state_msgs</depend>
     <depend>pluginlib</depend>
     <depend>qpup_hw</depend>
-    <depend>hardware_interface</depend>
 
     <export>
         <controller_interface plugin="${prefix}/odrive_state_controller_plugin.xml"/>
