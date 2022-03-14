@@ -22,7 +22,11 @@ bool QPUPHWReal::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
   can_ = std::make_unique<qpup_utils::QPUP_CAN>(
       __BYTE_ORDER__, qpup_utils::getParam<std::string>(root_nh, logger_, "can_interface_name", "can0"));
 
-  return can_->configure() && can_->activate();
+  if (!(can_->configure() && can_->activate())) {
+    return false;
+  }
+
+  return updatePIDGains();
 }
 
 QPUPHWReal::~QPUPHWReal() {
@@ -39,22 +43,22 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
     //    QPUP_ODRIVE_GET_SENSORLESS_ESTIMATES_FRAME_ID
 
     // Send RTR Requests
-    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
                                                                           QPUP_ODRIVE_GET_MOTOR_ERROR_FRAME_ID));
-    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
                                                                           QPUP_ODRIVE_GET_ENCODER_ERROR_FRAME_ID));
-    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
                                                                           QPUP_ODRIVE_GET_SENSORLESS_ERROR_FRAME_ID));
-    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
                                                                           QPUP_ODRIVE_GET_ENCODER_COUNT_FRAME_ID));
-    can_->writeODriveRTRFrame(
-        qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_IQ_FRAME_ID));
-    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
+                                                                          QPUP_ODRIVE_GET_IQ_FRAME_ID));
+    can_->writeODriveRTRFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
                                                                           QPUP_ODRIVE_GET_VBUS_VOLTAGE_FRAME_ID));
 
     // Read Streamed Data
-    const auto heartbeat_frame = can_->getLatestValue(
-        qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name], QPUP_ODRIVE_HEARTBEAT_FRAME_ID));
+    const auto heartbeat_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
+        odrive_axis_params_[joint_name].can_id, QPUP_ODRIVE_HEARTBEAT_FRAME_ID));
     if (heartbeat_frame.has_value()) {
       const auto heartbeat = std::get<qpup_odrive_heartbeat_t>(heartbeat_frame.value());
 
@@ -69,7 +73,7 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
     }
 
     const auto encoder_estimates_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
-        odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_ENCODER_ESTIMATES_FRAME_ID));
+        odrive_axis_params_[joint_name].can_id, QPUP_ODRIVE_GET_ENCODER_ESTIMATES_FRAME_ID));
     if (encoder_estimates_frame.has_value()) {
       const auto encoder_estimates = std::get<qpup_odrive_get_encoder_estimates_t>(encoder_estimates_frame.value());
 
@@ -79,7 +83,7 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
 
     // Read RTR Responses
     const auto motor_errors_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
-        odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_MOTOR_ERROR_FRAME_ID));
+        odrive_axis_params_[joint_name].can_id, QPUP_ODRIVE_GET_MOTOR_ERROR_FRAME_ID));
     if (motor_errors_frame.has_value()) {
       const auto motor_errors = std::get<qpup_odrive_get_motor_error_t>(motor_errors_frame.value());
 
@@ -91,7 +95,7 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
     }
 
     const auto encoder_errors_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
-        odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_ENCODER_ERROR_FRAME_ID));
+        odrive_axis_params_[joint_name].can_id, QPUP_ODRIVE_GET_ENCODER_ERROR_FRAME_ID));
     if (encoder_errors_frame.has_value()) {
       const auto encoder_errors = std::get<qpup_odrive_get_encoder_error_t>(encoder_errors_frame.value());
 
@@ -103,7 +107,7 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
     }
 
     const auto sensorless_errors_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
-        odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_SENSORLESS_ERROR_FRAME_ID));
+        odrive_axis_params_[joint_name].can_id, QPUP_ODRIVE_GET_SENSORLESS_ERROR_FRAME_ID));
     if (sensorless_errors_frame.has_value()) {
       const auto sensorless_errors = std::get<qpup_odrive_get_sensorless_error_t>(sensorless_errors_frame.value());
 
@@ -115,7 +119,7 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
     }
 
     const auto encoder_count_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
-        odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_ENCODER_COUNT_FRAME_ID));
+        odrive_axis_params_[joint_name].can_id, QPUP_ODRIVE_GET_ENCODER_COUNT_FRAME_ID));
     if (encoder_count_frame.has_value()) {
       const auto encoder_count = std::get<qpup_odrive_get_encoder_count_t>(encoder_count_frame.value());
 
@@ -123,8 +127,8 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
       odrive_state_data_[joint_name].count_in_cpr = encoder_count.count_in_cpr;
     }
 
-    const auto iq_frame = can_->getLatestValue(
-        qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_IQ_FRAME_ID));
+    const auto iq_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
+        odrive_axis_params_[joint_name].can_id, QPUP_ODRIVE_GET_IQ_FRAME_ID));
     if (iq_frame.has_value()) {
       const auto iq = std::get<qpup_odrive_get_iq_t>(iq_frame.value());
 
@@ -135,7 +139,7 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
     }
 
     const auto vbus_voltage_frame = can_->getLatestValue(qpup_utils::QPUP_CAN::getOdriveCANCommandId(
-        odrive_axis_can_id_[joint_name], QPUP_ODRIVE_GET_VBUS_VOLTAGE_FRAME_ID));
+        odrive_axis_params_[joint_name].can_id, QPUP_ODRIVE_GET_VBUS_VOLTAGE_FRAME_ID));
     if (vbus_voltage_frame.has_value()) {
       const auto vbus_voltage = std::get<qpup_odrive_get_vbus_voltage_t>(vbus_voltage_frame.value());
 
@@ -183,7 +187,7 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
     if (!odrive_state_data_[joint_name].do_not_clear_errors_flag.test_and_set()) {
       qpup_odrive_clear_errors_t clear_errors_message{};
 
-      if (can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+      if (can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
                                                                        QPUP_ODRIVE_CLEAR_ERRORS_FRAME_ID),
                            &clear_errors_message, 0)) {
         ROS_INFO_STREAM_NAMED(logger_, "Cleared Odrive Errors on " << joint_name << "!");
@@ -220,7 +224,7 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
         } else {  // message_size == sizeof(qpup_odrive_set_input_pos_t)
 
           successful_joint_write =
-              can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+              can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
                                                                            QPUP_ODRIVE_SET_INPUT_POS_FRAME_ID),
                                outgoing_can_data_buffer, message_size);
         }
@@ -249,7 +253,7 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
         } else {  // message_size == sizeof(qpup_odrive_set_input_vel_t)
 
           successful_joint_write =
-              can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+              can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
                                                                            QPUP_ODRIVE_SET_INPUT_VEL_FRAME_ID),
                                outgoing_can_data_buffer, message_size);
         }
@@ -277,7 +281,7 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
         } else {  // message_size == sizeof(qpup_odrive_set_input_torque_t)
 
           successful_joint_write =
-              can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_can_id_[joint_name],
+              can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
                                                                            QPUP_ODRIVE_SET_INPUT_TORQUE_FRAME_ID),
                                outgoing_can_data_buffer, message_size);
         }
@@ -327,9 +331,76 @@ bool QPUPHWReal::loadOdriveConfigFromParamServer(ros::NodeHandle &robot_hw_nh) {
 
     ROS_ASSERT(joints_list[joint_index].hasMember("odrive_axis_can_node_id"));
     ROS_ASSERT(joints_list[joint_index]["odrive_axis_can_node_id"].getType() == XmlRpc::XmlRpcValue::TypeInt);
-    odrive_axis_can_id_[joint_name] = static_cast<int>(joints_list[joint_index]["odrive_axis_can_node_id"]);
+    odrive_axis_params_[joint_name].can_id = static_cast<int>(joints_list[joint_index]["odrive_axis_can_node_id"]);
+
+    ROS_ASSERT(joints_list[joint_index].hasMember("pos_gain"));
+    ROS_ASSERT(joints_list[joint_index]["pos_gain"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+    odrive_axis_params_[joint_name].pos_gain = static_cast<double>(joints_list[joint_index]["pos_gain"]);
+
+    ROS_ASSERT(joints_list[joint_index].hasMember("vel_gain"));
+    ROS_ASSERT(joints_list[joint_index]["vel_gain"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+    odrive_axis_params_[joint_name].vel_gain = static_cast<double>(joints_list[joint_index]["vel_gain"]);
+
+    ROS_ASSERT(joints_list[joint_index].hasMember("vel_integrator_gain"));
+    ROS_ASSERT(joints_list[joint_index]["vel_integrator_gain"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+    odrive_axis_params_[joint_name].vel_integrator_gain =
+        static_cast<double>(joints_list[joint_index]["vel_integrator_gain"]);
   }
   return true;
+}
+
+bool QPUPHWReal::updatePIDGains() {
+  bool successful_joint_write = true;
+
+  uint8_t outgoing_can_data_buffer[CAN_MAX_DLEN];
+
+  for (const auto &joint_name : joint_names_) {
+    // Encode Signals
+    qpup_odrive_set_pos_gain_t set_pos_gain_message{};
+    set_pos_gain_message.pos_gain = qpup_odrive_set_pos_gain_pos_gain_encode(odrive_axis_params_[joint_name].pos_gain);
+
+    // Pack Message
+    int message_size = qpup_odrive_set_pos_gain_pack(outgoing_can_data_buffer, &set_pos_gain_message,
+                                                           sizeof(qpup_odrive_set_pos_gain_t));
+
+    if (message_size < 0) {
+      ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
+    } else if (message_size != sizeof(qpup_odrive_set_pos_gain_t)) {
+      ROS_ERROR_STREAM_NAMED(logger_, "Mis-match in packed size. Expected: " << sizeof(qpup_odrive_set_pos_gain_t)
+                                                                             << " Got: " << message_size);
+    } else {  // message_size == sizeof(qpup_odrive_set_pos_gain_t)
+
+      successful_joint_write &=
+          can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
+                                                                       QPUP_ODRIVE_SET_POS_GAIN_FRAME_ID),
+                           outgoing_can_data_buffer, message_size);
+    }
+
+    // Encode Signals
+    qpup_odrive_set_vel_gains_t set_vel_gains_message{};
+    set_vel_gains_message.vel_gain = qpup_odrive_set_vel_gains_vel_gain_encode(odrive_axis_params_[joint_name].vel_gain);
+    set_vel_gains_message.vel_integrator_gain =
+        qpup_odrive_set_vel_gains_vel_integrator_gain_encode(odrive_axis_params_[joint_name].vel_integrator_gain);
+
+    // Pack Message
+    message_size = qpup_odrive_set_vel_gains_pack(outgoing_can_data_buffer, &set_vel_gains_message,
+                                                            sizeof(qpup_odrive_set_vel_gains_t));
+
+    if (message_size < 0) {
+      ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
+    } else if (message_size != sizeof(qpup_odrive_set_vel_gains_t)) {
+      ROS_ERROR_STREAM_NAMED(logger_, "Mis-match in packed size. Expected: " << sizeof(qpup_odrive_set_vel_gains_t)
+                                                                             << " Got: " << message_size);
+    } else {  // message_size == sizeof(qpup_odrive_set_vel_gains_t)
+
+      successful_joint_write &=
+          can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
+                                                                       QPUP_ODRIVE_SET_VEL_GAINS_FRAME_ID),
+                           outgoing_can_data_buffer, message_size);
+    }
+  }
+
+  return successful_joint_write;
 }
 
 }  // namespace qpup_hw
