@@ -1,4 +1,4 @@
-#include "qpup_generated/qpup_can_generated.h"
+#include "qpup_utils/qpup_generated/qpup_can_generated.h"
 #include "qpup_utils/qpup_can.hpp"
 
 int main(int argc, char** argv) {

@@ -14,7 +14,7 @@
 #include <variant>
 #include <vector>
 
-#include "qpup_generated/qpup_can_generated.h"
+#include "qpup_utils/qpup_generated/qpup_can_generated.h"
 #include "realtime_tools/realtime_buffer.h"
 #include "ros/ros.h"
 
