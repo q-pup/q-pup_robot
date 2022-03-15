@@ -62,16 +62,11 @@ void OdriveStateController::starting(const ros::Time& time) {
 }
 
 void OdriveStateController::update(const ros::Time& time, const ros::Duration& /*period*/) {
-  static bool clear_errors_last = false;
-
-  const bool clear_errors_current = !do_not_clear_errors_flag_.test_and_set();
-
   // Only trigger clear_errors once per service call
-  const bool clear_errors = clear_errors_current && !clear_errors_last;
+  const bool clear_errors = !do_not_clear_errors_flag_.test_and_set();
   for (unsigned i = 0; i < num_odrive_axis_; i++) {
     odrive_state_[i].setClearErrors(clear_errors);
   }
-  clear_errors_last = clear_errors_current;
 
   // limit rate of publishing
   if (publish_rate_ > 0.0 && last_publish_time_ + ros::Duration(1.0 / publish_rate_) < time) {
