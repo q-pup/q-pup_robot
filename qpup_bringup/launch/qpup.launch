@@ -8,4 +8,5 @@
 
   <include file="$(find qpup_control)/launch/qpup_control.launch" pass_all_args="true"/>
   <include file="$(find qpup_config)/launch/bringup.launch" pass_all_args="true"/>
+  <include file="$(find qpup_vision)/launch/qpup_vision.launch" pass_all_args="true"/>
 </launch>

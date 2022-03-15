@@ -29,7 +29,5 @@
             <remap from="camera_image"  to="$(arg zed_node_name)/rgb/image_rect_color" />
             <remap from="camera_info"   to="$(arg zed_node_name)/rgb/camera_info" />
         </node>
-
-        <node name="qpup_vision" pkg="person_tracker" type="person_tracker"/>
     </group>
 </launch>

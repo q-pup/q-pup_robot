@@ -41,8 +41,7 @@ catkin_package(
 # Specify header include paths
 include_directories(include ${catkin_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIRS})
 
-add_executable(
-  person_tracker
+add_executable(person_tracker
   src/person_tracker.cpp
 )
 target_link_libraries(person_tracker ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
@@ -57,12 +56,9 @@ install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-
 # Install targets
 install(TARGETS person_tracker
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 # Install launch & rviz files
