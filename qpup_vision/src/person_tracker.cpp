@@ -22,7 +22,7 @@ std::unique_ptr<MoveBaseClient> ac;
 
 tf2_ros::Buffer buffer_;
 
-enum class State { FOLLOW, STOP, UNKNOWN };
+enum class State { UNKNOWN , FOLLOW, STOP };
 
 void pose_marker_callback(const ar_track_alvar_msgs::AlvarMarkers::ConstPtr& msg) {
   State new_state = State::UNKNOWN;
