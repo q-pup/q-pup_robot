@@ -17,7 +17,8 @@ bool QPUPHWReal::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
     return false;
   }
 
-  imu_ = std::make_unique<qpup_hw::navx::AHRS>(qpup_utils::getParam<std::string>(root_nh, logger_, "imu_interface_name", "/dev/ttyACM0"));
+  imu_ = std::make_unique<qpup_hw::navx::AHRS>(
+      qpup_utils::getParam<std::string>(root_nh, logger_, "imu_interface_name", "/dev/ttyACM0"));
   can_ = std::make_unique<qpup_utils::QPUP_CAN>(
       __BYTE_ORDER__, qpup_utils::getParam<std::string>(root_nh, logger_, "can_interface_name", "can0"));
 
@@ -360,7 +361,7 @@ bool QPUPHWReal::updatePIDGains() {
 
     // Pack Message
     int message_size = qpup_odrive_set_pos_gain_pack(outgoing_can_data_buffer, &set_pos_gain_message,
-                                                           sizeof(qpup_odrive_set_pos_gain_t));
+                                                     sizeof(qpup_odrive_set_pos_gain_t));
 
     if (message_size < 0) {
       ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
@@ -377,13 +378,14 @@ bool QPUPHWReal::updatePIDGains() {
 
     // Encode Signals
     qpup_odrive_set_vel_gains_t set_vel_gains_message{};
-    set_vel_gains_message.vel_gain = qpup_odrive_set_vel_gains_vel_gain_encode(odrive_axis_params_[joint_name].vel_gain);
+    set_vel_gains_message.vel_gain =
+        qpup_odrive_set_vel_gains_vel_gain_encode(odrive_axis_params_[joint_name].vel_gain);
     set_vel_gains_message.vel_integrator_gain =
         qpup_odrive_set_vel_gains_vel_integrator_gain_encode(odrive_axis_params_[joint_name].vel_integrator_gain);
 
     // Pack Message
     message_size = qpup_odrive_set_vel_gains_pack(outgoing_can_data_buffer, &set_vel_gains_message,
-                                                            sizeof(qpup_odrive_set_vel_gains_t));
+                                                  sizeof(qpup_odrive_set_vel_gains_t));
 
     if (message_size < 0) {
       ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");

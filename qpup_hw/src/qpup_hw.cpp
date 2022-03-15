@@ -93,9 +93,14 @@ bool QPUPHW::loadJointInfoFromParameterServer(ros::NodeHandle &robot_hw_nh) {
     ROS_ASSERT(joints_list[joint_index]["name"].getType() == XmlRpc::XmlRpcValue::TypeString);
     std::string joint_name = joints_list[joint_index]["name"];
     joint_names_.push_back(joint_name);
+
     ROS_ASSERT(joints_list[joint_index].hasMember("transmission_reduction"));
     ROS_ASSERT(joints_list[joint_index]["transmission_reduction"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-    joint_transmissions_.emplace(joint_name, joints_list[joint_index]["transmission_reduction"]);
+    ROS_ASSERT(joints_list[joint_index].hasMember("joint_offset"));
+    ROS_ASSERT(joints_list[joint_index]["joint_offset"].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+    joint_transmissions_.emplace(std::piecewise_construct, std::forward_as_tuple(joint_name),
+                                 std::forward_as_tuple(joints_list[joint_index]["transmission_reduction"],
+                                                       joints_list[joint_index]["joint_offset"]));
   }
   return true;
 }
