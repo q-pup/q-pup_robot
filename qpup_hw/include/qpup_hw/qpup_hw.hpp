@@ -43,21 +43,21 @@ class QPUPHW : public hardware_interface::RobotHW {
   };
 
   struct OdriveData {
-    uint32_t axis_error;
-    uint8_t axis_state;
-    uint8_t motor_flags;
-    uint8_t encoder_flags;
-    uint8_t controller_flags;
-    uint32_t motor_error;
-    uint32_t encoder_error;
-    uint32_t sensorless_error;
-    uint32_t shadow_count;
-    uint32_t count_in_cpr;
-    float iq_setpoint;
-    float iq_measured;
-    float vbus_voltage;
+    uint32_t axis_error = 0;
+    uint8_t axis_state = 0;
+    uint8_t motor_flags = 0;
+    uint8_t encoder_flags = 0;
+    uint8_t controller_flags = 0;
+    uint32_t motor_error = 0;
+    uint32_t encoder_error = 0;
+    uint32_t sensorless_error = 0;
+    uint32_t shadow_count = 0;
+    uint32_t count_in_cpr = 0;
+    float iq_setpoint = 0;
+    float iq_measured = 0;
+    float vbus_voltage = 0;
 
-    std::atomic_flag do_not_clear_errors_flag;
+    bool clear_errors = false;
   };
 
   bool init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) override;

@@ -184,7 +184,7 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
       break;
     }
 
-    if (!odrive_state_data_[joint_name].do_not_clear_errors_flag.test_and_set()) {
+    if (odrive_state_data_[joint_name].clear_errors) {
       qpup_odrive_clear_errors_t clear_errors_message{};
 
       if (can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,

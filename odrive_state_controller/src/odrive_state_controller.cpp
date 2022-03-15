@@ -50,7 +50,9 @@ bool OdriveStateController::init(qpup_hw::OdriveStateInterface* hw, ros::NodeHan
   }
 
   // Clear errors service
-  clear_errors_ = controller_nh.advertiseService("clear_errors", &OdriveStateController::clearErrorsCallback, this);
+  (void)(do_not_clear_errors_flag_.test_and_set());  // Init so that it doesn't clear errors on startup
+  clear_errors_server_ =
+      controller_nh.advertiseService("clear_errors", &OdriveStateController::clearErrorsCallback, this);
 
   return true;
 }
@@ -60,6 +62,17 @@ void OdriveStateController::starting(const ros::Time& time) {
 }
 
 void OdriveStateController::update(const ros::Time& time, const ros::Duration& /*period*/) {
+  static bool clear_errors_last = false;
+
+  const bool clear_errors_current = !do_not_clear_errors_flag_.test_and_set();
+
+  // Only trigger clear_errors once per service call
+  const bool clear_errors = clear_errors_current && !clear_errors_last;
+  for (unsigned i = 0; i < num_odrive_axis_; i++) {
+    odrive_state_[i].setClearErrors(clear_errors);
+  }
+  clear_errors_last = clear_errors_current;
+
   // limit rate of publishing
   if (publish_rate_ > 0.0 && last_publish_time_ + ros::Duration(1.0 / publish_rate_) < time) {
     if (realtime_pub_->trylock()) {
@@ -90,9 +103,7 @@ void OdriveStateController::stopping(const ros::Time& /*time*/) {}
 
 bool OdriveStateController::clearErrorsCallback(std_srvs::Empty::Request& /* request */,
                                                 std_srvs::Empty::Response& /*response*/) {
-  for (unsigned i = 0; i < num_odrive_axis_; i++) {
-    odrive_state_[i].triggerClearErrors();
-  }
+  do_not_clear_errors_flag_.clear();
   return 1U;
 }
 
