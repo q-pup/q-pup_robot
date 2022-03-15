@@ -21,6 +21,8 @@ class OdriveStateController : public controller_interface::Controller<qpup_hw::O
   virtual void stopping(const ros::Time& /*time*/);
 
  private:
+  std::string logger_;
+
   std::vector<qpup_hw::OdriveStateHandle> odrive_state_;
   std::map<std::string, std::atomic<uint16_t>> odrive_axis_state_cmd_;
   std::map<std::string, std::atomic<uint8_t>> odrive_control_mode_cmd_;

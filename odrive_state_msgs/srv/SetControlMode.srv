@@ -1,3 +1,9 @@
+uint8 CONTROL_MODE_VOLTAGE=0
+uint8 CONTROL_MODE_TORQUE=1
+uint8 CONTROL_MODE_VELOCITY=2
+uint8 CONTROL_MODE_POSITION=3
+uint8 CONTROL_MODE_INVALID=4
+
 string joint_name
 uint8 control_mode
 ---
