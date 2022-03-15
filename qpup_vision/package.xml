@@ -21,10 +21,14 @@
   <buildtool_depend>catkin</buildtool_depend>
 
 
-  <depend>roscpp</depend>
+  <depend>actionlib</depend>
   <depend>ar_track_alvar</depend>
-  <depend>tf2_ros</depend>
+  <depend>geometry_msgs</depend>
   <depend>move_base_msgs</depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>tf2_ros</depend>
 
   <exec_depend>rviz</exec_depend>
   <exec_depend>zed_wrapper</exec_depend>

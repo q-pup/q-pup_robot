@@ -3,10 +3,14 @@ project(qpup_vision)
 
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
+  actionlib
   ar_track_alvar
-  tf2_ros
+  geometry_msgs
   move_base_msgs
+  roscpp
+  std_msgs
+  tf2_geometry_msgs
+  tf2_ros
 )
 
 # Declare a catkin package
@@ -14,10 +18,14 @@ catkin_package(
   INCLUDE_DIRS
     include
   CATKIN_DEPENDS
-    roscpp
+    actionlib
     ar_track_alvar
-    tf2_ros
+    geometry_msgs
     move_base_msgs
+    roscpp
+    std_msgs
+    tf2_geometry_msgs
+    tf2_ros
 )
 
 
@@ -44,9 +52,15 @@ install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
+
+# Install targets
+install(TARGETS person_tracker
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+
 # Install launch & rviz files
 install(DIRECTORY launch rviz
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
-
-
