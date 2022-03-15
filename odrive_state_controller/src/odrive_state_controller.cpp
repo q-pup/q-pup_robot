@@ -54,6 +54,13 @@ bool OdriveStateController::init(qpup_hw::OdriveStateInterface* hw, ros::NodeHan
   clear_errors_server_ =
       controller_nh.advertiseService("clear_errors", &OdriveStateController::clearErrorsCallback, this);
 
+  set_axis_state_server_ =
+      controller_nh.advertiseService("set_axis_state", &OdriveStateController::setAxisStateCallback, this);
+  set_control_mode_server_ =
+      controller_nh.advertiseService("set_control_mode", &OdriveStateController::setControlModeCallback, this);
+  set_input_mode_server_ =
+      controller_nh.advertiseService("set_input_mode", &OdriveStateController::setInputModeCallback, this);
+
   return true;
 }
 
@@ -62,8 +69,15 @@ void OdriveStateController::starting(const ros::Time& time) {
 }
 
 void OdriveStateController::update(const ros::Time& time, const ros::Duration& /*period*/) {
-  static bool clear_errors_last = false;
+  for (unsigned i = 0; i < num_odrive_axis_; i++) {
+    std::string joint_name = odrive_state_[i].getName();
 
+    odrive_state_[i].setAxisState(odrive_axis_state_cmd_[joint_name].load());
+    odrive_state_[i].setControlMode(odrive_control_mode_cmd_[joint_name].load());
+    odrive_state_[i].setInputMode(odrive_input_mode_cmd_[joint_name].load());
+  }
+
+  static bool clear_errors_last = false;
   const bool clear_errors_current = !do_not_clear_errors_flag_.test_and_set();
 
   // Only trigger clear_errors once per service call
@@ -104,6 +118,24 @@ void OdriveStateController::stopping(const ros::Time& /*time*/) {}
 bool OdriveStateController::clearErrorsCallback(std_srvs::Empty::Request& /* request */,
                                                 std_srvs::Empty::Response& /*response*/) {
   do_not_clear_errors_flag_.clear();
+  return 1U;
+}
+
+bool OdriveStateController::setAxisStateCallback(odrive_state_msgs::SetAxisState::Request& request,
+                                                 odrive_state_msgs::SetAxisState::Response& /* response */) {
+  odrive_axis_state_cmd_[request.joint_name].store(request.axis_state);
+  return 1U;
+}
+
+bool OdriveStateController::setControlModeCallback(odrive_state_msgs::SetControlMode::Request& request,
+                                                   odrive_state_msgs::SetControlMode::Response& /* response */) {
+  odrive_control_mode_cmd_[request.joint_name].store(request.control_mode);
+  return 1U;
+}
+
+bool OdriveStateController::setInputModeCallback(odrive_state_msgs::SetInputMode::Request& request,
+                                                 odrive_state_msgs::SetInputMode::Response& /* response */) {
+  odrive_input_mode_cmd_[request.joint_name].store(request.input_mode);
   return 1U;
 }
 

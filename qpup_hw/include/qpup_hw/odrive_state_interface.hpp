@@ -11,7 +11,8 @@ class OdriveStateHandle {
                     const uint8_t* motor_flags, const uint8_t* encoder_flags, const uint8_t* controller_flags,
                     const uint32_t* motor_error, const uint32_t* encoder_error, const uint32_t* sensorless_error,
                     const uint32_t* shadow_count, const uint32_t* count_in_cpr, const float* iq_setpoint,
-                    const float* iq_measured, const float* vbus_voltage, bool* clear_errors)
+                    const float* iq_measured, const float* vbus_voltage, uint16_t* axis_state_cmd,
+                    uint8_t* control_mode_cmd, uint16_t* input_mode_cmd, bool* clear_errors)
       : name_(name),
         axis_error_(axis_error),
         axis_state_(axis_state),
@@ -26,6 +27,10 @@ class OdriveStateHandle {
         iq_setpoint_(iq_setpoint),
         iq_measured_(iq_measured),
         vbus_voltage_(vbus_voltage),
+
+        axis_state_cmd_(axis_state_cmd),
+        control_mode_cmd_(control_mode_cmd),
+        input_mode_cmd_(input_mode_cmd),
 
         clear_errors_(clear_errors) {}
 
@@ -73,6 +78,16 @@ class OdriveStateHandle {
     return *vbus_voltage_;
   }
 
+  void setAxisState(uint16_t axis_state_cmd) {
+    *axis_state_cmd_ = axis_state_cmd;
+  }
+  void setControlMode(uint8_t control_mode) {
+    *control_mode_cmd_ = control_mode;
+  }
+  void setInputMode(uint16_t input_mode) {
+    *input_mode_cmd_ = input_mode;
+  }
+
   void setClearErrors(bool do_clear_errors) {
     *clear_errors_ = do_clear_errors;
   }
@@ -97,6 +112,10 @@ class OdriveStateHandle {
   const float* iq_measured_ = {nullptr};
 
   const float* vbus_voltage_ = {nullptr};
+
+  uint16_t* axis_state_cmd_ = {nullptr};
+  uint8_t* control_mode_cmd_ = {nullptr};
+  uint16_t* input_mode_cmd_ = {nullptr};
 
   bool* clear_errors_ = {nullptr};
 };

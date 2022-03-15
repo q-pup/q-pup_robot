@@ -198,6 +198,7 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
       continue;
     }
 
+    // Clear Errors Command
     if (odrive_state_data_[joint_name].clear_errors) {
       qpup_odrive_clear_errors_t clear_errors_message{};
 
@@ -210,8 +211,78 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
       }
     }
 
-    bool successful_joint_write = false;
     uint8_t outgoing_can_data_buffer[CAN_MAX_DLEN];
+
+    // Controller Mode Command (Control Mode + Input Mode)
+    static uint8_t last_control_mode = 0;
+    static uint16_t last_input_mode = 0;
+    if (odrive_state_data_[joint_name].control_mode_cmd != last_control_mode ||
+        odrive_state_data_[joint_name].input_mode_cmd != last_input_mode) {
+      // Encode Signals
+      qpup_odrive_set_controller_mode_t set_controller_mode_message{};
+      set_controller_mode_message.control_mode = odrive_state_data_[joint_name].control_mode_cmd;
+      set_controller_mode_message.input_mode = odrive_state_data_[joint_name].input_mode_cmd;
+
+      // Pack Message
+      const int message_size = qpup_odrive_set_controller_mode_pack(
+          outgoing_can_data_buffer, &set_controller_mode_message, sizeof(qpup_odrive_set_controller_mode_t));
+
+      if (message_size < 0) {
+        ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
+      } else if (message_size != sizeof(qpup_odrive_set_controller_mode_t)) {
+        ROS_ERROR_STREAM_NAMED(logger_, "Mis-match in packed size. Expected: "
+                                            << sizeof(qpup_odrive_set_controller_mode_t) << " Got: " << message_size);
+      } else {  // message_size == sizeof(qpup_odrive_set_controller_mode_t)
+
+        if (can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
+                                                                         QPUP_ODRIVE_SET_CONTROLLER_MODE_FRAME_ID),
+                             outgoing_can_data_buffer, message_size)) {
+          ROS_INFO_STREAM_NAMED(logger_, "Set Controller Mode to : ControlMode("
+                                             << odrive_state_data_[joint_name].control_mode_cmd << ") InputMode("
+                                             << odrive_state_data_[joint_name].input_mode_cmd << ") on " << joint_name
+                                             << "!");
+        } else {
+          ROS_ERROR_STREAM_NAMED(logger_, "Failed to set Controller Mode to : ControlMode("
+                                              << odrive_state_data_[joint_name].control_mode_cmd << ") InputMode("
+                                              << odrive_state_data_[joint_name].input_mode_cmd << ") on " << joint_name
+                                              << "!");
+        }
+      }
+    }
+    last_control_mode = odrive_state_data_[joint_name].control_mode_cmd;
+    last_input_mode = odrive_state_data_[joint_name].input_mode_cmd;
+
+    // Axis State Command
+    if (odrive_state_data_[joint_name].axis_state_cmd != odrive_state_data_[joint_name].axis_state) {
+      // Encode Signals
+      qpup_odrive_set_axis_state_t set_axis_state_message{};
+      set_axis_state_message.axis_requested_state = odrive_state_data_[joint_name].axis_state_cmd;
+
+      // Pack Message
+      const int message_size = qpup_odrive_set_axis_state_pack(outgoing_can_data_buffer, &set_axis_state_message,
+                                                               sizeof(qpup_odrive_set_axis_state_t));
+
+      if (message_size < 0) {
+        ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
+      } else if (message_size != sizeof(qpup_odrive_set_axis_state_t)) {
+        ROS_ERROR_STREAM_NAMED(logger_, "Mis-match in packed size. Expected: " << sizeof(qpup_odrive_set_axis_state_t)
+                                                                               << " Got: " << message_size);
+      } else {  // message_size == sizeof(qpup_odrive_set_axis_state_t)
+
+        if (can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
+                                                                         QPUP_ODRIVE_SET_AXIS_STATE_FRAME_ID),
+                             outgoing_can_data_buffer, message_size)) {
+          ROS_INFO_STREAM_NAMED(logger_, "Set Axis State to " << odrive_state_data_[joint_name].axis_state_cmd << " on "
+                                                              << joint_name << "!");
+        } else {
+          ROS_ERROR_STREAM_NAMED(logger_, "Failed to set Axis State to "
+                                              << odrive_state_data_[joint_name].axis_state_cmd << " on " << joint_name
+                                              << "!");
+        }
+      }
+    }
+
+    bool successful_joint_write = false;
 
     // TODO: range checks before encoding signals
     switch (actuator_joint_commands_[joint_name].type) {
