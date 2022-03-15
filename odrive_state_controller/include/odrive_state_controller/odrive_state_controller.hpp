@@ -20,8 +20,9 @@ class OdriveStateController : public controller_interface::Controller<qpup_hw::O
  private:
   std::vector<qpup_hw::OdriveStateHandle> odrive_state_;
   std::shared_ptr<realtime_tools::RealtimePublisher<odrive_state_msgs::OdriveState> > realtime_pub_;
-  ros::ServiceServer clear_errors_;
+  ros::ServiceServer clear_errors_server_;
 
+  std::atomic_flag do_not_clear_errors_flag_ = ATOMIC_FLAG_INIT;
   ros::Time last_publish_time_;
   double publish_rate_;
   unsigned int num_odrive_axis_;

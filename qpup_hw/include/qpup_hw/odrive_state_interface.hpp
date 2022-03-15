@@ -11,7 +11,7 @@ class OdriveStateHandle {
                     const uint8_t* motor_flags, const uint8_t* encoder_flags, const uint8_t* controller_flags,
                     const uint32_t* motor_error, const uint32_t* encoder_error, const uint32_t* sensorless_error,
                     const uint32_t* shadow_count, const uint32_t* count_in_cpr, const float* iq_setpoint,
-                    const float* iq_measured, const float* vbus_voltage, std::atomic_flag* do_not_clear_errors_flag)
+                    const float* iq_measured, const float* vbus_voltage, bool* clear_errors)
       : name_(name),
         axis_error_(axis_error),
         axis_state_(axis_state),
@@ -26,7 +26,8 @@ class OdriveStateHandle {
         iq_setpoint_(iq_setpoint),
         iq_measured_(iq_measured),
         vbus_voltage_(vbus_voltage),
-        do_not_clear_errors_flag_(do_not_clear_errors_flag) {}
+
+        clear_errors_(clear_errors) {}
 
   std::string getName() const {
     return name_;
@@ -72,8 +73,8 @@ class OdriveStateHandle {
     return *vbus_voltage_;
   }
 
-  void triggerClearErrors() {
-    do_not_clear_errors_flag_->clear();
+  void setClearErrors(bool do_clear_errors) {
+    *clear_errors_ = do_clear_errors;
   }
 
  private:
@@ -97,7 +98,7 @@ class OdriveStateHandle {
 
   const float* vbus_voltage_ = {nullptr};
 
-  std::atomic_flag* do_not_clear_errors_flag_ = {nullptr};
+  bool* clear_errors_ = {nullptr};
 };
 
 class OdriveStateInterface : public hardware_interface::HardwareResourceManager<OdriveStateHandle> {};
