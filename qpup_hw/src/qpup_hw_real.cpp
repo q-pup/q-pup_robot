@@ -1,12 +1,30 @@
 #include "qpup_hw/qpup_hw_real.hpp"
 
 #include <memory>
+#include <unordered_set>
 
 #include "pluginlib/class_list_macros.hpp"
 #include "qpup_utils/qpup_params.hpp"
 #include "tf2/LinearMath/Quaternion.h"
 
 namespace qpup_hw {
+
+// clang-format off
+const std::unordered_set<std::string> DISCONNECTED_JOINT_LIST{
+//    "lf_hip_joint",
+//    "lf_upper_leg_joint",
+//    "lf_lower_leg_joint",
+//    "rf_hip_joint",
+//    "rf_upper_leg_joint",
+//    "rf_lower_leg_joint",
+//    "lh_hip_joint",
+//    "lh_upper_leg_joint",
+//    "lh_lower_leg_joint",
+//    "rh_hip_joint",
+//    "rh_upper_leg_joint",
+//    "rh_lower_leg_joint",
+};
+// clang-format on
 
 bool QPUPHWReal::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
   if (!QPUPHW::init(root_nh, robot_hw_nh)) {
@@ -146,9 +164,7 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
       odrive_state_data_[joint_name].vbus_voltage = vbus_voltage.vbus_voltage;
     }
 
-    // Hacks
-    if (joint_name == "rf_lower_leg_joint" || joint_name == "lf_lower_leg_joint") {
-      // Disconnected
+    if (DISCONNECTED_JOINT_LIST.find(joint_name) != DISCONNECTED_JOINT_LIST.end()) {
       actuator_joint_states_[joint_name].actuator_velocity = 0;
       actuator_joint_states_[joint_name].actuator_position = actuator_joint_commands_[joint_name].actuator_data;
     }
@@ -178,10 +194,8 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
 
 void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*period*/) {
   for (const auto &joint_name : joint_names_) {
-    // Hacks
-    if (joint_name == "rf_lower_leg_joint" || joint_name == "lf_lower_leg_joint") {
-      // Disconnected
-      break;
+    if (DISCONNECTED_JOINT_LIST.find(joint_name) != DISCONNECTED_JOINT_LIST.end()) {
+      continue;
     }
 
     if (odrive_state_data_[joint_name].clear_errors) {
