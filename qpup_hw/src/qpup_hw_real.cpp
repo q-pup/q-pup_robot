@@ -220,10 +220,9 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
 
         // Encode Signals
         qpup_odrive_set_input_pos_t set_input_pos_message{};
-        set_input_pos_message.input_pos =
-            qpup_odrive_set_input_pos_input_pos_encode(actuator_joint_commands_[joint_name].actuator_data) /
-            RADIANS_PER_ROTATION;
-        set_input_pos_message.vel_ff = qpup_odrive_set_input_pos_vel_ff_encode(0) / RADIANS_PER_ROTATION;
+        set_input_pos_message.input_pos = qpup_odrive_set_input_pos_input_pos_encode(
+            actuator_joint_commands_[joint_name].actuator_data / RADIANS_PER_ROTATION);
+        set_input_pos_message.vel_ff = qpup_odrive_set_input_pos_vel_ff_encode(0 / RADIANS_PER_ROTATION);
         set_input_pos_message.torque_ff = qpup_odrive_set_input_pos_torque_ff_encode(0);
 
         // Pack Message
@@ -250,9 +249,8 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
 
         // Encode Signals
         qpup_odrive_set_input_vel_t set_input_vel_message{};
-        set_input_vel_message.input_vel =
-            qpup_odrive_set_input_vel_input_vel_encode(actuator_joint_commands_[joint_name].actuator_data) /
-            RADIANS_PER_ROTATION;
+        set_input_vel_message.input_vel = qpup_odrive_set_input_vel_input_vel_encode(
+            actuator_joint_commands_[joint_name].actuator_data / RADIANS_PER_ROTATION);
         set_input_vel_message.input_torque_ff = qpup_odrive_set_input_vel_input_torque_ff_encode(0);
 
         // Pack Message
