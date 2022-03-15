@@ -10,11 +10,10 @@
     </group>
 
     <group ns="imu_tf">
-        <!-- TODO: Determine TF -->
         <arg name="X" default="0"/>
-        <arg name="Y" default="0.10"/>
-        <arg name="Z" default="0.10"/>
-        <arg name="yaw" default="0"/>
+        <arg name="Y" default="0.160"/>
+        <arg name="Z" default="0.075"/>
+        <arg name="yaw" default="$(eval pi/2)"/>
         <arg name="pitch" default="0"/>
         <arg name="roll" default="0"/>
         <node pkg="tf2_ros" type="static_transform_publisher" name="broadcaster" args="$(arg X) $(arg Y) $(arg Z) $(arg yaw) $(arg pitch) $(arg roll) base_link imu_link"/>
