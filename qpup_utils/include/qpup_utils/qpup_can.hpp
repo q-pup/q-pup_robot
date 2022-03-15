@@ -175,16 +175,16 @@ class QPUP_CAN_FAKE: public QPUP_CAN {
     return true;
   };
 
-  std::optional<received_CAN_data> getLatestValue(canid_t msg_id) override {
+  std::optional<received_CAN_data> getLatestValue(canid_t /*msg_id*/) override {
       return std::nullopt;
   };
-  bool writeODriveRTRFrame(canid_t msg_id) override {
+  bool writeODriveRTRFrame(canid_t /*msg_id*/) override {
       return true;
   };
-  bool writeRTRFrame(canid_t msg_id, uint8_t size) override {
+  bool writeRTRFrame(canid_t /*msg_id*/, uint8_t /*size*/) override {
       return true;
   };
-  bool writeFrame(canid_t msg_id, void* data, uint8_t size) override {
+  bool writeFrame(canid_t /*msg_id*/, void* /*data*/, uint8_t /*size*/) override {
     return true;
   }
 };
