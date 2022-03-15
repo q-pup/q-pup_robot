@@ -214,10 +214,8 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
     uint8_t outgoing_can_data_buffer[CAN_MAX_DLEN];
 
     // Controller Mode Command (Control Mode + Input Mode)
-    static uint8_t last_control_mode = 0;
-    static uint16_t last_input_mode = 0;
-    if (odrive_state_data_[joint_name].control_mode_cmd != last_control_mode ||
-        odrive_state_data_[joint_name].input_mode_cmd != last_input_mode) {
+    if (odrive_state_data_[joint_name].control_mode_cmd != last_control_mode_ ||
+        odrive_state_data_[joint_name].input_mode_cmd != last_input_mode_) {
       // Encode Signals
       qpup_odrive_set_controller_mode_t set_controller_mode_message{};
       set_controller_mode_message.control_mode = odrive_state_data_[joint_name].control_mode_cmd;
@@ -249,8 +247,8 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
         }
       }
     }
-    last_control_mode = odrive_state_data_[joint_name].control_mode_cmd;
-    last_input_mode = odrive_state_data_[joint_name].input_mode_cmd;
+    last_control_mode_ = odrive_state_data_[joint_name].control_mode_cmd;
+    last_input_mode_ = odrive_state_data_[joint_name].input_mode_cmd;
 
     // Axis State Command
     if (odrive_state_data_[joint_name].axis_state_cmd != odrive_state_data_[joint_name].axis_state) {

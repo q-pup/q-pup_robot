@@ -34,6 +34,9 @@ class QPUPHWReal : public QPUPHW {
   std::unique_ptr<qpup_utils::QPUP_CAN> can_;
   std::map<std::string, OdriveAxisParams> odrive_axis_params_;
 
+  uint8_t last_control_mode_{0};
+  uint16_t last_input_mode_{0};
+
   static constexpr double TORQUE_CONSTANT{0.6778688430786133};
   static constexpr double RADIANS_PER_ROTATION{2 * M_PI};
 };
