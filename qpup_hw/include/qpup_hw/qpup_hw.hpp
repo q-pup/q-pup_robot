@@ -57,6 +57,10 @@ class QPUPHW : public hardware_interface::RobotHW {
     float iq_measured = 0;
     float vbus_voltage = 0;
 
+    uint16_t axis_state_cmd = 0;
+    uint8_t control_mode_cmd = 0;
+    uint16_t input_mode_cmd = 0;
+
     bool clear_errors = false;
   };
 

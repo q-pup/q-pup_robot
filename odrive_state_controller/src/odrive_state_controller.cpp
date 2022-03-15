@@ -1,5 +1,7 @@
 #include "odrive_state_controller/odrive_state_controller.hpp"
 
+#include "qpup_utils/qpup_params.hpp"
+
 #include <algorithm>
 #include <cstddef>
 #include <pluginlib/class_list_macros.hpp>
@@ -8,6 +10,8 @@ namespace odrive_state_controller {
 
 bool OdriveStateController::init(qpup_hw::OdriveStateInterface* hw, ros::NodeHandle& root_nh,
                                  ros::NodeHandle& controller_nh) {
+  logger_ = qpup_utils::getLoggerName(controller_nh);
+
   // List of joints names(associated with odrives) to be published
   std::vector<std::string> joint_names;
 
@@ -54,6 +58,13 @@ bool OdriveStateController::init(qpup_hw::OdriveStateInterface* hw, ros::NodeHan
   clear_errors_server_ =
       controller_nh.advertiseService("clear_errors", &OdriveStateController::clearErrorsCallback, this);
 
+  set_axis_state_server_ =
+      controller_nh.advertiseService("set_axis_state", &OdriveStateController::setAxisStateCallback, this);
+  set_control_mode_server_ =
+      controller_nh.advertiseService("set_control_mode", &OdriveStateController::setControlModeCallback, this);
+  set_input_mode_server_ =
+      controller_nh.advertiseService("set_input_mode", &OdriveStateController::setInputModeCallback, this);
+
   return true;
 }
 
@@ -62,6 +73,14 @@ void OdriveStateController::starting(const ros::Time& time) {
 }
 
 void OdriveStateController::update(const ros::Time& time, const ros::Duration& /*period*/) {
+  for (unsigned i = 0; i < num_odrive_axis_; i++) {
+    std::string joint_name = odrive_state_[i].getName();
+
+    odrive_state_[i].setAxisState(odrive_axis_state_cmd_[joint_name].load());
+    odrive_state_[i].setControlMode(odrive_control_mode_cmd_[joint_name].load());
+    odrive_state_[i].setInputMode(odrive_input_mode_cmd_[joint_name].load());
+  }
+
   // Only trigger clear_errors once per service call
   const bool clear_errors = !do_not_clear_errors_flag_.test_and_set();
   for (unsigned i = 0; i < num_odrive_axis_; i++) {
@@ -99,7 +118,40 @@ void OdriveStateController::stopping(const ros::Time& /*time*/) {}
 bool OdriveStateController::clearErrorsCallback(std_srvs::Empty::Request& /* request */,
                                                 std_srvs::Empty::Response& /*response*/) {
   do_not_clear_errors_flag_.clear();
-  return 1U;
+  return true;
+}
+
+bool OdriveStateController::setAxisStateCallback(odrive_state_msgs::SetAxisState::Request& request,
+                                                 odrive_state_msgs::SetAxisState::Response& /* response */) {
+  if (request.axis_state >= odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_INVALID) {
+    ROS_ERROR_STREAM_NAMED(logger_, "Invalid Axis State: " << static_cast<unsigned>(request.axis_state));
+    return false;
+  }
+
+  odrive_axis_state_cmd_[request.joint_name].store(request.axis_state);
+  return true;
+}
+
+bool OdriveStateController::setControlModeCallback(odrive_state_msgs::SetControlMode::Request& request,
+                                                   odrive_state_msgs::SetControlMode::Response& /* response */) {
+  if (request.control_mode >= odrive_state_msgs::SetControlMode::Request::Type::CONTROL_MODE_INVALID) {
+    ROS_ERROR_STREAM_NAMED(logger_, "Invalid Control Mode: " << static_cast<unsigned>(request.control_mode));
+    return false;
+  }
+
+  odrive_control_mode_cmd_[request.joint_name].store(request.control_mode);
+  return true;
+}
+
+bool OdriveStateController::setInputModeCallback(odrive_state_msgs::SetInputMode::Request& request,
+                                                 odrive_state_msgs::SetInputMode::Response& /* response */) {
+  if (request.input_mode >= odrive_state_msgs::SetInputMode::Request::Type::INPUT_MODE_INVALID) {
+    ROS_ERROR_STREAM_NAMED(logger_, "Invalid Input Mode: " << static_cast<unsigned>(request.input_mode));
+    return false;
+  }
+
+  odrive_input_mode_cmd_[request.joint_name].store(request.input_mode);
+  return true;
 }
 
 }  // namespace odrive_state_controller
