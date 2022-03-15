@@ -49,6 +49,6 @@
 
     <group if="$(arg hardware_connected)">
          <!-- Publish HW transforms -->
-          <include file="$(find qpup_config)/launch/tf.launch">
+          <include file="$(find qpup_config)/launch/tf.launch"/>
     </group>
 </launch>
