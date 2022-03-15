@@ -1,3 +1,4 @@
+#include <Eigen/Geometry>
 #include <actionlib/client/simple_action_client.h>
 #include <ar_track_alvar_msgs/AlvarMarkers.h>
 #include <geometry_msgs/Pose.h>
@@ -50,7 +51,14 @@ void pose_marker_callback(const ar_track_alvar_msgs::AlvarMarkers::ConstPtr& msg
   new_goal.pose.position.x *= (mag - 2) / mag;
   new_goal.pose.position.y *= (mag - 2) / mag;
 
-  // TODO: Orientation based on heading to target
+  // Orientation based on heading to target
+  const Eigen::Vector3d cur_heading(1,0,0);
+  const Eigen::Vector3d to_goal(new_goal.pose.position.x, new_goal.pose.position.y, new_goal.pose.position.z);
+  const auto quat = Eigen::Quaternion<double>::FromTwoVectors(cur_heading, to_goal);
+  new_goal.pose.orientation.x = quat.x();
+  new_goal.pose.orientation.y = quat.y();
+  new_goal.pose.orientation.z = quat.z();
+  new_goal.pose.orientation.w = quat.w();
 
   switch (new_state) {
     case State::FOLLOW:

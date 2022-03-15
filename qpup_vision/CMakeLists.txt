@@ -13,6 +13,9 @@ find_package(catkin REQUIRED COMPONENTS
   tf2_ros
 )
 
+# Load system dependencies
+find_package(Eigen3 REQUIRED)
+
 # Declare a catkin package
 catkin_package(
   INCLUDE_DIRS
@@ -26,6 +29,8 @@ catkin_package(
     std_msgs
     tf2_geometry_msgs
     tf2_ros
+  DEPENDS
+    EIGEN3
 )
 
 
@@ -34,13 +39,13 @@ catkin_package(
 ###########
 
 # Specify header include paths
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIRS})
 
 add_executable(
   person_tracker
   src/person_tracker.cpp
 )
-target_link_libraries(person_tracker ${catkin_LIBRARIES})
+target_link_libraries(person_tracker ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 
 
 #############
