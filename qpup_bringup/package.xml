@@ -19,5 +19,6 @@
     <exec_depend>champ_teleop</exec_depend>
     <exec_depend>qpup_control</exec_depend>
     <exec_depend>qpup_config</exec_depend>
+    <exec_depend>qpup_vision</exec_depend>
 
 </package>

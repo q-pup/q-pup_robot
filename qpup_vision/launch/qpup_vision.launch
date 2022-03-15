@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find qpup_vision)/launch/zed_ar_track.launch">
+        <arg name="camera_name"     value="zed" />
+        <arg name="zed_node_name"   value="zed_node" />
+        <arg name="camera_model"    value="zed" />
+    </include>
+
+    <node name="tracker" pkg="qpup_vision" type="person_tracker"/>
+</launch>
