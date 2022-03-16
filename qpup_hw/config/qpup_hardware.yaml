@@ -4,8 +4,8 @@ qpup:
       splay_transmission_reduction: &shared_splay_transmission_reduction 40.0
       hip_transmission_reduction: &shared_hip_transmission_reduction 40.0
       knee_transmission_reduction: &shared_knee_transmission_reduction 64.61538461538462
-      left_knee_joint_offset: &shared_left_knee_joint_offset -30.0
-      right_knee_joint_offset: &shared_right_knee_joint_offset 30.0
+      left_knee_joint_offset: &shared_left_knee_joint_offset !degrees 30.0
+      right_knee_joint_offset: &shared_right_knee_joint_offset !degrees -30.0
 
     qpup_base:
       type: qpup_hw/QPUPHWReal
@@ -103,6 +103,6 @@ qpup:
           transmission_reduction: *shared_knee_transmission_reduction
           joint_offset: *shared_right_knee_joint_offset
           odrive_axis_can_node_id: 7
-          pos_gain: 36.0 #TODO
-          vel_gain: 6.0 #TODO
-          vel_integrator_gain: 3.3 #TODO
+          pos_gain: 10.0
+          vel_gain: 1.2000000476837158
+          vel_integrator_gain: 3.299999952316284
