@@ -21,6 +21,15 @@
                                                          imu_sensor_controller
                                                          joint_group_position_controller"/>
 
+        <!-- list of all other controllers that should be loaded, but not started -->
+       <arg name="load_only_controller_list" value="joints_position_controller"/>
+
+       <!-- load all other controllers-->
+       <node name="load_controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+            output="screen" args="--stopped $(arg load_only_controller_list)"/>
+
+                                                         
+
        <!-- load the intially started controllers-->
        <node name="start_controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
              output="screen" args="$(arg initial_start_controller_list)"/>
