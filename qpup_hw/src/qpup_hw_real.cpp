@@ -6,6 +6,7 @@
 #include "pluginlib/class_list_macros.hpp"
 #include "qpup_utils/qpup_params.hpp"
 #include "tf2/LinearMath/Quaternion.h"
+#include "odrive_state_msgs/SetAxisState.h"
 
 namespace qpup_hw {
 

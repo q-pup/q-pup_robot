@@ -8,6 +8,7 @@ endif ()
 find_package(catkin REQUIRED COMPONENTS
         hardware_interface
         joint_limits_interface
+        odrive_state_msgs
         qpup_utils
         roscpp
         tf2
@@ -24,6 +25,7 @@ catkin_package(
     CATKIN_DEPENDS
         hardware_interface
         joint_limits_interface
+        odrive_state_msgs
         qpup_utils
         roscpp
         tf2
