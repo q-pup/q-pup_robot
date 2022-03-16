@@ -58,6 +58,13 @@ bool OdriveStateController::init(qpup_hw::OdriveStateInterface* hw, ros::NodeHan
   clear_errors_server_ =
       controller_nh.advertiseService("clear_errors", &OdriveStateController::clearErrorsCallback, this);
 
+  for (unsigned i = 0; i < num_odrive_axis_; i++) {
+    std::string joint_name = odrive_state_[i].getName();
+
+    odrive_axis_state_cmd_[joint_name].store(odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_IDLE);
+    odrive_control_mode_cmd_[joint_name].store(odrive_state_msgs::SetControlMode::Request::Type::CONTROL_MODE_POSITION);
+    odrive_input_mode_cmd_[joint_name].store(odrive_state_msgs::SetInputMode::Request::Type::INPUT_MODE_PASSTHROUGH);
+  }
   set_axis_state_server_ =
       controller_nh.advertiseService("set_axis_state", &OdriveStateController::setAxisStateCallback, this);
   set_control_mode_server_ =
@@ -76,7 +83,12 @@ void OdriveStateController::update(const ros::Time& time, const ros::Duration& /
   for (unsigned i = 0; i < num_odrive_axis_; i++) {
     std::string joint_name = odrive_state_[i].getName();
 
-    odrive_state_[i].setAxisState(odrive_axis_state_cmd_[joint_name].load());
+    auto axis_cmd = odrive_axis_state_cmd_[joint_name].load();
+    if (axis_cmd != odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_INVALID) {
+      odrive_state_[i].setAxisState(axis_cmd);
+      odrive_axis_state_cmd_[joint_name].store(odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_INVALID);
+    }
+
     odrive_state_[i].setControlMode(odrive_control_mode_cmd_[joint_name].load());
     odrive_state_[i].setInputMode(odrive_input_mode_cmd_[joint_name].load());
   }

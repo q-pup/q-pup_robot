@@ -110,6 +110,11 @@ class QPUP_CAN {
 
   std::string getLogger();
 
+  // FIXME: Upstream odrive firmware seems to hardcode most message dlcs to 8, even when messages are smaller
+  static constexpr uint8_t ODRIVE_RTR_DLC{8};
+  static constexpr uint8_t ODRIVE_CMD_WITH_DATA_DLC{8};
+  static constexpr uint8_t ODRIVE_CMD_WITHOUT_DATA_DLC{0};
+
  protected:
   QPUP_CAN(){}
 
@@ -153,9 +158,6 @@ class QPUP_CAN {
   std::map<canid_t, realtime_tools::RealtimeBuffer<received_CAN_data>> recv_map_;
   std::timed_mutex recv_map_mtx_;
   static constexpr std::chrono::milliseconds MUTEX_LOCK_TIMEOUT{1};
-
-  // FIXME: Upstream odrive firmware seems to hardcode rtr dlc to 8, even when messages are smaller
-  static constexpr uint8_t ODRIVE_RTR_DLC{8};
 };
 
 class QPUP_CAN_FAKE: public QPUP_CAN {
