@@ -61,9 +61,9 @@ bool OdriveStateController::init(qpup_hw::OdriveStateInterface* hw, ros::NodeHan
   for (unsigned i = 0; i < num_odrive_axis_; i++) {
     std::string joint_name = odrive_state_[i].getName();
 
-    odrive_state_[i].setAxisState(odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_IDLE);
-    odrive_state_[i].setControlMode(odrive_state_msgs::SetControlMode::Request::Type::CONTROL_MODE_POSITION);
-    odrive_state_[i].setInputMode(odrive_state_msgs::SetInputMode::Request::Type::INPUT_MODE_PASSTHROUGH);
+    odrive_axis_state_cmd_[joint_name].store(odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_IDLE);
+    odrive_control_mode_cmd_[joint_name].store(odrive_state_msgs::SetControlMode::Request::Type::CONTROL_MODE_POSITION);
+    odrive_input_mode_cmd_[joint_name].store(odrive_state_msgs::SetInputMode::Request::Type::INPUT_MODE_PASSTHROUGH);
   }
   set_axis_state_server_ =
       controller_nh.advertiseService("set_axis_state", &OdriveStateController::setAxisStateCallback, this);
