@@ -4,8 +4,8 @@ qpup:
       splay_transmission_reduction: &shared_splay_transmission_reduction 40.0
       hip_transmission_reduction: &shared_hip_transmission_reduction 40.0
       knee_transmission_reduction: &shared_knee_transmission_reduction 64.61538461538462
-      left_knee_joint_offset: &shared_left_knee_joint_offset -30.0
-      right_knee_joint_offset: &shared_right_knee_joint_offset 30.0
+      left_knee_joint_offset: &shared_left_knee_joint_offset !degrees 30.0
+      right_knee_joint_offset: &shared_right_knee_joint_offset !degrees -30.0
 
     qpup_base:
       type: qpup_hw/QPUPHWReal
