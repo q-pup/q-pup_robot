@@ -66,5 +66,14 @@ If it does not return `unlimited`, you must adjust your memory locking permissio
 ```
 rosrun qpup_bringup bringup_can.sh
 
+roslaunch qpup_bringup demo.launch
+# or
 roslaunch qpup_bringup qpup.launch
+
+#or
+cd <repo>
+tmuxinator start qpup
+
+# Additionally on Computer with ros-noetic-desktop-full:
+roslaunch qpup_bringup gui.launch
 ```

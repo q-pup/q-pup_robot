@@ -1,4 +1,0 @@
-<launch>
-  <node name="rqt_gait" pkg="rqt_gui" type="rqt_gui" respawn="false" output="screen"
-        args="--perspective-file $(find qpup_bringup)/rqt/gait.perspective"/>
-</launch>
