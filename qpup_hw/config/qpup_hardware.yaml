@@ -26,17 +26,17 @@ qpup:
           transmission_reduction: *shared_left_hip_transmission_reduction
           joint_offset: 0.0
           odrive_axis_can_node_id: 2
-          pos_gain: 36.0 #TODO
-          vel_gain: 6.0 #TODO
-          vel_integrator_gain: 3.3 #TODO
+          pos_gain: 10.0
+          vel_gain: 1.100000023841858
+          vel_integrator_gain: 1.0
 
         - name: lf_lower_leg_joint # FLK
           transmission_reduction: *shared_left_knee_transmission_reduction
           joint_offset: *shared_left_knee_joint_offset
-          odrive_axis_can_node_id: 1
-          pos_gain: 36.0 #TODO
-          vel_gain: 6.0 #TODO
-          vel_integrator_gain: 3.3 #TODO
+          odrive_axis_can_node_id: FLK	
+          pos_gain: 10.0
+          vel_gain: 1.5
+          vel_integrator_gain: 1.0
 
         - name: rf_hip_joint # FRS
           transmission_reduction: *shared_right_splay_transmission_reduction
@@ -50,17 +50,17 @@ qpup:
           transmission_reduction: *shared_right_hip_transmission_reduction
           joint_offset: 0.0
           odrive_axis_can_node_id: 6
-          pos_gain: 36.0 #TODO
-          vel_gain: 6.0 #TODO
-          vel_integrator_gain: 3.3 #TODO
+          pos_gain: 10.350000381469727
+          vel_gain: 1.399999976158142
+          vel_integrator_gain: 1.3199999332427979
 
         - name: rf_lower_leg_joint # FRK
           transmission_reduction: *shared_right_knee_transmission_reduction
           joint_offset: *shared_right_knee_joint_offset
           odrive_axis_can_node_id: 5
-          pos_gain: 36.0 #TODO
-          vel_gain: 6.0 #TODO
-          vel_integrator_gain: 3.3 #TODO
+          pos_gain: 10.0
+          vel_gain: 1.0
+          vel_integrator_gain: 1.0
 
         - name: lh_hip_joint # RLS
           transmission_reduction: *shared_left_splay_transmission_reduction
@@ -82,9 +82,9 @@ qpup:
           transmission_reduction: *shared_left_knee_transmission_reduction
           joint_offset: *shared_left_knee_joint_offset
           odrive_axis_can_node_id: 11
-          pos_gain: 36.0 #TODO
-          vel_gain: 6.0 #TODO
-          vel_integrator_gain: 3.3 #TODO
+          pos_gain: 10.0
+          vel_gain: 1.7999999523162842
+          vel_integrator_gain: 3.299999952316284
 
         - name: rh_hip_joint # RRS
           transmission_reduction: *shared_right_splay_transmission_reduction
