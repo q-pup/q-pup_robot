@@ -103,6 +103,6 @@ qpup:
           transmission_reduction: *shared_knee_transmission_reduction
           joint_offset: *shared_right_knee_joint_offset
           odrive_axis_can_node_id: 7
-          pos_gain: 36.0 #TODO
-          vel_gain: 6.0 #TODO
-          vel_integrator_gain: 3.3 #TODO
+          pos_gain: 10.0
+          vel_gain: 1.2000000476837158
+          vel_integrator_gain: 3.299999952316284
