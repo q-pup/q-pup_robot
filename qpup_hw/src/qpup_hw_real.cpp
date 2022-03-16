@@ -3,10 +3,10 @@
 #include <memory>
 #include <unordered_set>
 
+#include "odrive_state_msgs/SetAxisState.h"
 #include "pluginlib/class_list_macros.hpp"
 #include "qpup_utils/qpup_params.hpp"
 #include "tf2/LinearMath/Quaternion.h"
-#include "odrive_state_msgs/SetAxisState.h"
 
 namespace qpup_hw {
 
@@ -21,9 +21,9 @@ const std::unordered_set<std::string> DISCONNECTED_JOINT_LIST{
    "lh_hip_joint",
    "lh_upper_leg_joint",
    "lh_lower_leg_joint",
-//    "rh_hip_joint",
-//    "rh_upper_leg_joint",
-//    "rh_lower_leg_joint",
+   "rh_hip_joint",
+   "rh_upper_leg_joint",
+   "rh_lower_leg_joint",
 };
 // clang-format on
 
@@ -196,6 +196,7 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
 void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*period*/) {
   for (const auto &joint_name : joint_names_) {
     if (DISCONNECTED_JOINT_LIST.find(joint_name) != DISCONNECTED_JOINT_LIST.end()) {
+      joint_to_actuator_position_interface_.propagate();
       continue;
     }
 
@@ -229,8 +230,9 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
       if (message_size < 0) {
         ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
       } else if (message_size != qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC) {
-        ROS_ERROR_STREAM_NAMED(logger_, "Mis-match in packed size. Expected: "
-                                            << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC << " Got: " << message_size);
+        ROS_ERROR_STREAM_NAMED(logger_,
+                               "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
+                                                                      << " Got: " << message_size);
       } else {  // message_size == qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
 
         if (can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
@@ -252,8 +254,9 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
     last_input_mode_ = odrive_state_data_[joint_name].input_mode_cmd;
 
     // Axis State Command (when state doesnt match command and command isn't invalid)
-    if (odrive_state_data_[joint_name].axis_state_cmd != odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_INVALID &&
-      odrive_state_data_[joint_name].axis_state_cmd != odrive_state_data_[joint_name].axis_state) {
+    if (odrive_state_data_[joint_name].axis_state_cmd !=
+            odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_INVALID &&
+        odrive_state_data_[joint_name].axis_state_cmd != odrive_state_data_[joint_name].axis_state) {
       // Encode Signals
       qpup_odrive_set_axis_state_t set_axis_state_message{};
       set_axis_state_message.axis_requested_state = odrive_state_data_[joint_name].axis_state_cmd;
@@ -265,8 +268,9 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
       if (message_size < 0) {
         ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
       } else if (message_size != qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC) {
-        ROS_ERROR_STREAM_NAMED(logger_, "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
-                                                                               << " Got: " << message_size);
+        ROS_ERROR_STREAM_NAMED(logger_,
+                               "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
+                                                                      << " Got: " << message_size);
       } else {  // message_size == qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
 
         if (can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
@@ -275,8 +279,10 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
           ROS_INFO_STREAM_NAMED(logger_, "Set Axis State to " << odrive_state_data_[joint_name].axis_state_cmd << " on "
                                                               << joint_name << "!");
 
-          // Set axis_state_cmd to invalid to prevent resending the same command if the odrive state machine changes states to a different state
-          odrive_state_data_[joint_name].axis_state_cmd = odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_INVALID;
+          // Set axis_state_cmd to invalid to prevent resending the same command if the odrive state machine changes
+          // states to a different state
+          odrive_state_data_[joint_name].axis_state_cmd =
+              odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_INVALID;
         } else {
           ROS_ERROR_STREAM_NAMED(logger_, "Failed to set Axis State to "
                                               << odrive_state_data_[joint_name].axis_state_cmd << " on " << joint_name
@@ -286,9 +292,10 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
     }
 
     bool successful_joint_write = false;
-    
+
     // Movement Commands (Only send in closed loop mode)
-    if (odrive_state_data_[joint_name].axis_state == odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_CLOSED_LOOP_CONTROL) {
+    if (odrive_state_data_[joint_name].axis_state ==
+        odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_CLOSED_LOOP_CONTROL) {
       // TODO: range checks before encoding signals
       switch (actuator_joint_commands_[joint_name].type) {
         case QPUPHW::QPUPActuatorJointCommand::Type::POSITION: {
@@ -308,14 +315,15 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
           if (message_size < 0) {
             ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
           } else if (message_size != qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC) {
-            ROS_ERROR_STREAM_NAMED(logger_, "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
-                                                                                  << " Got: " << message_size);
+            ROS_ERROR_STREAM_NAMED(
+                logger_, "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
+                                                                << " Got: " << message_size);
           } else {  // message_size == qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
 
             successful_joint_write =
                 can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
-                                                                            QPUP_ODRIVE_SET_INPUT_POS_FRAME_ID),
-                                outgoing_can_data_buffer, message_size);
+                                                                             QPUP_ODRIVE_SET_INPUT_POS_FRAME_ID),
+                                 outgoing_can_data_buffer, message_size);
           }
           break;
         }
@@ -336,14 +344,15 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
           if (message_size < 0) {
             ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
           } else if (message_size != qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC) {
-            ROS_ERROR_STREAM_NAMED(logger_, "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
-                                                                                  << " Got: " << message_size);
+            ROS_ERROR_STREAM_NAMED(
+                logger_, "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
+                                                                << " Got: " << message_size);
           } else {  // message_size == qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
 
             successful_joint_write =
                 can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
-                                                                            QPUP_ODRIVE_SET_INPUT_VEL_FRAME_ID),
-                                outgoing_can_data_buffer, message_size);
+                                                                             QPUP_ODRIVE_SET_INPUT_VEL_FRAME_ID),
+                                 outgoing_can_data_buffer, message_size);
           }
 
           break;
@@ -358,20 +367,21 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
               qpup_odrive_set_input_vel_input_vel_encode(actuator_joint_commands_[joint_name].actuator_data);
 
           // Pack Message
-          const int message_size = qpup_odrive_set_input_torque_pack(outgoing_can_data_buffer, &set_input_torque_message,
-                                                                    qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC);
+          const int message_size = qpup_odrive_set_input_torque_pack(
+              outgoing_can_data_buffer, &set_input_torque_message, qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC);
 
           if (message_size < 0) {
             ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
           } else if (message_size != qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC) {
-            ROS_ERROR_STREAM_NAMED(logger_, "Mis-match in packed size. Expected: "
-                                                << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC << " Got: " << message_size);
+            ROS_ERROR_STREAM_NAMED(
+                logger_, "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
+                                                                << " Got: " << message_size);
           } else {  // message_size == qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
 
             successful_joint_write =
                 can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
-                                                                            QPUP_ODRIVE_SET_INPUT_TORQUE_FRAME_ID),
-                                outgoing_can_data_buffer, message_size);
+                                                                             QPUP_ODRIVE_SET_INPUT_TORQUE_FRAME_ID),
+                                 outgoing_can_data_buffer, message_size);
           }
 
           break;
@@ -379,23 +389,23 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
 
         case QPUPHW::QPUPActuatorJointCommand::Type::NONE: {
           ROS_DEBUG_STREAM_NAMED(logger_, joint_name << " has a " << actuator_joint_commands_[joint_name].type
-                                                    << " command type. Sending Stop Command to Motors!");
+                                                     << " command type. Sending Stop Command to Motors!");
           //      successful_joint_write = //todo: stop motors command?
           break;
         }
 
         default: {
           ROS_ERROR_STREAM_NAMED(logger_, joint_name << " has a joint command with index "
-                                                    << static_cast<int>(actuator_joint_commands_[joint_name].type)
-                                                    << ",which is an unknown command type. Sending "
+                                                     << static_cast<int>(actuator_joint_commands_[joint_name].type)
+                                                     << ",which is an unknown command type. Sending "
                                                         "Stop Command to Roboteq Controller!");
           //      successful_joint_write = //todo: stop motors command?}
         }
       }
       if (!successful_joint_write &&
           actuator_joint_commands_[joint_name].type != QPUPHW::QPUPActuatorJointCommand::Type::NONE) {
-        ROS_ERROR_STREAM_NAMED(logger_, "Failed to write " << actuator_joint_commands_[joint_name].type << " command to "
-                                                          << joint_name << ".");
+        ROS_ERROR_STREAM_NAMED(logger_, "Failed to write " << actuator_joint_commands_[joint_name].type
+                                                           << " command to " << joint_name << ".");
       }
     }
   }
@@ -455,8 +465,9 @@ bool QPUPHWReal::updatePIDGains() {
     if (message_size < 0) {
       ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
     } else if (message_size != qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC) {
-      ROS_ERROR_STREAM_NAMED(logger_, "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
-                                                                             << " Got: " << message_size);
+      ROS_ERROR_STREAM_NAMED(logger_,
+                             "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
+                                                                    << " Got: " << message_size);
     } else {  // message_size == qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
 
       successful_joint_write &=
@@ -479,8 +490,9 @@ bool QPUPHWReal::updatePIDGains() {
     if (message_size < 0) {
       ROS_ERROR_STREAM_NAMED(logger_, "CAN Packing Error...");
     } else if (message_size != qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC) {
-      ROS_ERROR_STREAM_NAMED(logger_, "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
-                                                                             << " Got: " << message_size);
+      ROS_ERROR_STREAM_NAMED(logger_,
+                             "Mis-match in packed size. Expected: " << qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
+                                                                    << " Got: " << message_size);
     } else {  // message_size == qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC
 
       successful_joint_write &=
