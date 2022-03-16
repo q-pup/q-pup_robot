@@ -251,8 +251,9 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
     last_control_mode_ = odrive_state_data_[joint_name].control_mode_cmd;
     last_input_mode_ = odrive_state_data_[joint_name].input_mode_cmd;
 
-    // Axis State Command
-    if (odrive_state_data_[joint_name].axis_state_cmd != odrive_state_data_[joint_name].axis_state) {
+    // Axis State Command (when state doesnt match command and command isn't invalid)
+    if (odrive_state_data_[joint_name].axis_state_cmd != odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_INVALID &&
+      odrive_state_data_[joint_name].axis_state_cmd != odrive_state_data_[joint_name].axis_state) {
       // Encode Signals
       qpup_odrive_set_axis_state_t set_axis_state_message{};
       set_axis_state_message.axis_requested_state = odrive_state_data_[joint_name].axis_state_cmd;
@@ -273,6 +274,9 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
                              outgoing_can_data_buffer, message_size)) {
           ROS_INFO_STREAM_NAMED(logger_, "Set Axis State to " << odrive_state_data_[joint_name].axis_state_cmd << " on "
                                                               << joint_name << "!");
+
+          // Set axis_state_cmd to invalid to prevent resending the same command if the odrive state machine changes states to a different state
+          odrive_state_data_[joint_name].axis_state_cmd = odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_INVALID;
         } else {
           ROS_ERROR_STREAM_NAMED(logger_, "Failed to set Axis State to "
                                               << odrive_state_data_[joint_name].axis_state_cmd << " on " << joint_name
