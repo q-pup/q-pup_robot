@@ -3,12 +3,18 @@ qpup:
     shared_values:
       left_splay_transmission_reduction: &shared_left_splay_transmission_reduction 40.0 # TODO
       right_splay_transmission_reduction: &shared_right_splay_transmission_reduction 40.0 # TODO
+
       left_hip_transmission_reduction: &shared_left_hip_transmission_reduction 40.0
+      left_hip_joint_offset: &shared_left_hip_joint_offset !degrees 45.0
+
       right_hip_transmission_reduction: &shared_right_hip_transmission_reduction -40.0
+      right_hip_joint_offset: &shared_right_hip_joint_offset !degrees -45.0
+
       left_knee_transmission_reduction: &shared_left_knee_transmission_reduction -64.61538461538462
+      left_knee_joint_offset: &shared_left_knee_joint_offset !degrees -90.0
+
       right_knee_transmission_reduction: &shared_right_knee_transmission_reduction 64.61538461538462
-      left_knee_joint_offset: &shared_left_knee_joint_offset !degrees -30.0
-      right_knee_joint_offset: &shared_right_knee_joint_offset !degrees 30.0
+      right_knee_joint_offset: &shared_right_knee_joint_offset !degrees 90.0
 
     qpup_base:
       type: qpup_hw/QPUPHWReal
@@ -24,7 +30,7 @@ qpup:
 
         - name: lf_upper_leg_joint # FLH
           transmission_reduction: *shared_left_hip_transmission_reduction
-          joint_offset: 0.0
+          joint_offset: *shared_left_hip_joint_offset
           odrive_axis_can_node_id: 2
           pos_gain: 10.0
           vel_gain: 1.100000023841858
@@ -33,7 +39,7 @@ qpup:
         - name: lf_lower_leg_joint # FLK
           transmission_reduction: *shared_left_knee_transmission_reduction
           joint_offset: *shared_left_knee_joint_offset
-          odrive_axis_can_node_id: FLK	
+          odrive_axis_can_node_id: 1
           pos_gain: 10.0
           vel_gain: 1.5
           vel_integrator_gain: 1.0
@@ -48,7 +54,7 @@ qpup:
 
         - name: rf_upper_leg_joint # FRH
           transmission_reduction: *shared_right_hip_transmission_reduction
-          joint_offset: 0.0
+          joint_offset: *shared_right_hip_joint_offset
           odrive_axis_can_node_id: 6
           pos_gain: 10.350000381469727
           vel_gain: 1.399999976158142
@@ -72,7 +78,7 @@ qpup:
 
         - name: lh_upper_leg_joint # RLH
           transmission_reduction: *shared_left_hip_transmission_reduction
-          joint_offset: 0.0
+          joint_offset: *shared_left_hip_joint_offset
           odrive_axis_can_node_id: 12
           pos_gain: 9.5
           vel_gain: 1.600000023841858
@@ -96,7 +102,7 @@ qpup:
 
         - name: rh_upper_leg_joint # RRH
           transmission_reduction: *shared_right_hip_transmission_reduction
-          joint_offset: 0.0
+          joint_offset: *shared_right_hip_joint_offset
           odrive_axis_can_node_id: 8
           pos_gain: 10.0
           vel_gain: 1.600000023841858
