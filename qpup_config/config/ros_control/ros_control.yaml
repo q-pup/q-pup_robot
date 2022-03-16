@@ -1,5 +1,5 @@
 qpup:
-  joint_group_position_controller:
+  joint_group_position_controller: # Note: Can't change name because CHAMP hardcodes in some nodes
       type: position_controllers/JointTrajectoryController
       joints:
           - lf_hip_joint
