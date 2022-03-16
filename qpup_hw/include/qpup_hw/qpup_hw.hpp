@@ -5,9 +5,13 @@
 #include "hardware_interface/joint_command_interface.h"
 #include "hardware_interface/joint_state_interface.h"
 #include "hardware_interface/robot_hw.h"
+#include "odrive_state_msgs/SetAxisState.h"
+#include "odrive_state_msgs/SetControlMode.h"
+#include "odrive_state_msgs/SetInputMode.h"
 #include "qpup_hw/odrive_state_interface.hpp"
 #include "transmission_interface/simple_transmission.h"
 #include "transmission_interface/transmission_interface.h"
+
 namespace qpup_hw {
 
 class QPUPHW : public hardware_interface::RobotHW {
@@ -57,9 +61,9 @@ class QPUPHW : public hardware_interface::RobotHW {
     float iq_measured = 0;
     float vbus_voltage = 0;
 
-    uint16_t axis_state_cmd = 1;
-    uint8_t control_mode_cmd = 3;
-    uint16_t input_mode_cmd = 1;
+    uint16_t axis_state_cmd = odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_IDLE;
+    uint8_t control_mode_cmd = odrive_state_msgs::SetControlMode::Request::Type::CONTROL_MODE_POSITION;
+    uint16_t input_mode_cmd = odrive_state_msgs::SetInputMode::Request::Type::INPUT_MODE_PASSTHROUGH;
 
     bool clear_errors = false;
   };
