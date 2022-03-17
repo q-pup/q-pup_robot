@@ -41,7 +41,7 @@ qpup:
           joint_offset: *shared_left_knee_joint_offset
           odrive_axis_can_node_id: 1
           pos_gain: 10.0
-          vel_gain: 1.5
+          vel_gain: 0.8
           vel_integrator_gain: 1.0
 
         - name: FRS # Front Right Splay
@@ -65,7 +65,7 @@ qpup:
           joint_offset: *shared_right_knee_joint_offset
           odrive_axis_can_node_id: 5
           pos_gain: 10.0
-          vel_gain: 1.0
+          vel_gain: 0.8
           vel_integrator_gain: 1.0
 
         - name: RLS # Rear Left Splay

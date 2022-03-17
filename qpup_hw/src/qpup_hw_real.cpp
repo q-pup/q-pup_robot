@@ -11,19 +11,19 @@
 namespace qpup_hw {
 
 // clang-format off
-const std::unordered_set<std::string> DISCONNECTED_JOINT_LIST{
+const std::unordered_set<std::string> DISCONNECTED_JOINT_LIST {
    "FLS",
-   "FLH",
-   "FLK",
+  //  "FLH",
+  //  "FLK",
    "FRS",
-   "FRH",
-   "FRK",
+  //  "FRH",
+  //  "FRK",
    "RLS",
-   "RLH",
-   "RLK",
+  //  "RLH",
+  //  "RLK",
    "RRS",
-   "RRH",
-   "RRK",
+  //  "RRH",
+  //  "RRK",
 };
 // clang-format on
 
