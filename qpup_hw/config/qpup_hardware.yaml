@@ -8,13 +8,13 @@ qpup:
       left_hip_joint_offset: &shared_left_hip_joint_offset !degrees 45.0
 
       right_hip_transmission_reduction: &shared_right_hip_transmission_reduction -40.0
-      right_hip_joint_offset: &shared_right_hip_joint_offset !degrees -45.0
+      right_hip_joint_offset: &shared_right_hip_joint_offset !degrees 45.0
 
       left_knee_transmission_reduction: &shared_left_knee_transmission_reduction -64.61538461538462
       left_knee_joint_offset: &shared_left_knee_joint_offset !degrees -90.0
 
       right_knee_transmission_reduction: &shared_right_knee_transmission_reduction 64.61538461538462
-      right_knee_joint_offset: &shared_right_knee_joint_offset !degrees 90.0
+      right_knee_joint_offset: &shared_right_knee_joint_offset !degrees -90.0
 
     qpup_base:
       type: qpup_hw/QPUPHWReal
@@ -72,11 +72,11 @@ qpup:
           transmission_reduction: *shared_left_splay_transmission_reduction
           joint_offset: 0.0
           odrive_axis_can_node_id: 9
-          pos_gain: 6.0
-          vel_gain: 1.9500000476837158
-          vel_integrator_gain: 1.5
+          pos_gain: 9.824999809265137
+          vel_gain: 1.1456249952316284
+          vel_integrator_gain: 0.8812500238418579
 
-        - name: RLH # Rear Left Splay
+        - name: RLH # Rear Left Hip
           transmission_reduction: *shared_left_hip_transmission_reduction
           joint_offset: *shared_left_hip_joint_offset
           odrive_axis_can_node_id: 12
