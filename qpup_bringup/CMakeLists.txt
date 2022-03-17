@@ -15,3 +15,7 @@ install(PROGRAMS
         scripts/bringup_jetson_can.sh
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
         )
+
+catkin_install_python(PROGRAMS scripts/clock_server.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
