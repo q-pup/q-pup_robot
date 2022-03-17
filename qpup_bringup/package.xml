@@ -22,5 +22,7 @@
     <exec_depend>qpup_config</exec_depend>
     <exec_depend>qpup_vision</exec_depend>
     <exec_depend>rqt_gui</exec_depend>
+    <exec_depend>rosgraph_msgs</exec_depend>
+    <exec_depend>rospy</exec_depend>
     <exec_depend>rviz</exec_depend>
 </package>

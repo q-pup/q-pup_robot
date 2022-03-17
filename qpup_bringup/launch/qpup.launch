@@ -6,6 +6,9 @@
   <arg name="rviz" default="true"/>
   <arg name="hardware_connected" default="true"/>
 
+  <param name="/use_sim_time" value="true" />
+  <node name="clock_server" type="clock_server.py" pkg="qpup_bringup"/>
+
   <include file="$(find qpup_control)/launch/qpup_control.launch" pass_all_args="true"/>
   <include file="$(find qpup_config)/launch/bringup.launch" pass_all_args="true"/>
   <include file="$(find qpup_vision)/launch/qpup_vision.launch" pass_all_args="true"/>
