@@ -19,11 +19,11 @@ const std::unordered_set<std::string> DISCONNECTED_JOINT_LIST{
    "FRH",
    "FRK",
    "RLS",
-   "RLH",
-   "RLK",
+  //  "RLH",
+  //  "RLK",
    "RRS",
-   "RRH",
-   "RRK",
+  //  "RRH",
+  //  "RRK",
 };
 // clang-format on
 
@@ -45,7 +45,8 @@ bool QPUPHWReal::init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) {
     return false;
   }
 
-  return updatePIDGains();
+  // return updatePIDGains();
+  return true;
 }
 
 QPUPHWReal::~QPUPHWReal() {
