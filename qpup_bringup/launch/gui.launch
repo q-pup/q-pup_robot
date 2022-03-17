@@ -4,6 +4,6 @@
   <node name="rqt_2" pkg="rqt_gui" type="rqt_gui" respawn="false" output="screen"
         args="--perspective-file $(find qpup_bringup)/rqt/2.perspective"/>
   <node name="rviz" pkg="rviz" type="rviz"
-        args="-d $(find champ_description)/rviz/urdf_viewer.rviz -f odom"
+        args="-d $(find champ_description)/rviz/urdf_viewer.rviz -f /qpup/odom"
         output="screen"/>
 </launch>
