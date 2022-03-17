@@ -16,9 +16,11 @@
 
     <buildtool_depend>catkin</buildtool_depend>
 
+    <exec_depend>champ_description</exec_depend>
     <exec_depend>champ_teleop</exec_depend>
     <exec_depend>qpup_control</exec_depend>
     <exec_depend>qpup_config</exec_depend>
     <exec_depend>qpup_vision</exec_depend>
-
+    <exec_depend>rqt_gui</exec_depend>
+    <exec_depend>rviz</exec_depend>
 </package>
