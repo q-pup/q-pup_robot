@@ -34,5 +34,5 @@ qpup:
 
   joint_position_controllers:
     type: position_controllers/JointGroupPositionController
-    joints joints: *shared_joints_list
+    joints: *shared_joints_list
     publish_rate: 50
