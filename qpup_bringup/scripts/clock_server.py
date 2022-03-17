@@ -5,7 +5,7 @@ import time
 def clock_server():
     pub = rospy.Publisher('/clock', Clock, queue_size=10)
     rospy.init_node('clock_server', anonymous=True)
-    sim_speed_multiplier = 0.5
+    sim_speed_multiplier = 1/3
     sim_clock = Clock()
     zero_time = time.time()
 
