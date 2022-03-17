@@ -14,8 +14,7 @@ bool QPUPControlLoop::init() {
       qpup_hw_.get(), nh_);
 
   // Set last_control_loop_time_ for first update call
-  ros::ros_steadytime(last_control_loop_time_.sec,
-                      last_control_loop_time_.nsec);
+  last_control_loop_time_ = ros::Time::now();
 
   return true;
 }
@@ -25,8 +24,8 @@ void QPUPControlLoop::update() {
   ros::Time time_now = ros::Time::now();
 
   // Calculate control loop period using Monotonic Time
-  ros::ros_steadytime(current_control_loop_time_.sec,
-                      current_control_loop_time_.nsec);
+  current_control_loop_time_ = ros::Time::now();
+
   ros::Duration control_loop_period =
       current_control_loop_time_ - last_control_loop_time_;
   last_control_loop_time_ = current_control_loop_time_;
