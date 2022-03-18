@@ -214,6 +214,19 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
       continue;
     }
 
+    // Reboot Command
+    if (odrive_state_data_[joint_name].reboot) {
+      qpup_odrive_reboot_t reboot_message{};
+
+      if (can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
+                                                                       QPUP_ODRIVE_REBOOT_FRAME_ID),
+                           &reboot_message, 0)) {
+        ROS_INFO_STREAM_NAMED(logger_, "Rebooted Odrive " << joint_name << "!");
+      } else {
+        ROS_ERROR_STREAM_NAMED(logger_, "Failed to write reboot Odrive " << joint_name << ".");
+      }
+    }
+
     // Clear Errors Command
     if (odrive_state_data_[joint_name].clear_errors) {
       qpup_odrive_clear_errors_t clear_errors_message{};

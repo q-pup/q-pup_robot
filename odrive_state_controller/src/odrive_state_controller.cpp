@@ -1,10 +1,10 @@
 #include "odrive_state_controller/odrive_state_controller.hpp"
 
-#include "qpup_utils/qpup_params.hpp"
-
 #include <algorithm>
 #include <cstddef>
 #include <pluginlib/class_list_macros.hpp>
+
+#include "qpup_utils/qpup_params.hpp"
 
 namespace odrive_state_controller {
 
@@ -64,7 +64,10 @@ bool OdriveStateController::init(qpup_hw::OdriveStateInterface* hw, ros::NodeHan
     odrive_axis_state_cmd_[joint_name].store(odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_IDLE);
     odrive_control_mode_cmd_[joint_name].store(odrive_state_msgs::SetControlMode::Request::Type::CONTROL_MODE_POSITION);
     odrive_input_mode_cmd_[joint_name].store(odrive_state_msgs::SetInputMode::Request::Type::INPUT_MODE_PASSTHROUGH);
+    (void)do_not_reboot_odrive_flag_[joint_name].test_and_set();
   }
+  reset_odrive_server_ =
+      controller_nh.advertiseService("reset_odrive", &OdriveStateController::resetOdriveCallback, this);
   set_axis_state_server_ =
       controller_nh.advertiseService("set_axis_state", &OdriveStateController::setAxisStateCallback, this);
   set_control_mode_server_ =
@@ -91,6 +94,10 @@ void OdriveStateController::update(const ros::Time& time, const ros::Duration& /
 
     odrive_state_[i].setControlMode(odrive_control_mode_cmd_[joint_name].load());
     odrive_state_[i].setInputMode(odrive_input_mode_cmd_[joint_name].load());
+
+    // Only reboot once per service call
+    const bool reboot = !do_not_reboot_odrive_flag_[joint_name].test_and_set();
+    odrive_state_[i].setReboot(reboot);
   }
 
   // Only trigger clear_errors once per service call
@@ -130,6 +137,12 @@ void OdriveStateController::stopping(const ros::Time& /*time*/) {}
 bool OdriveStateController::clearErrorsCallback(std_srvs::Empty::Request& /* request */,
                                                 std_srvs::Empty::Response& /*response*/) {
   do_not_clear_errors_flag_.clear();
+  return true;
+}
+
+bool OdriveStateController::resetOdriveCallback(odrive_state_msgs::ResetOdrive::Request& request,
+                                                odrive_state_msgs::ResetOdrive::Response& /* response */) {
+  do_not_reboot_odrive_flag_[request.joint_name].clear();
   return true;
 }
 
