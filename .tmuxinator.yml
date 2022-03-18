@@ -1,0 +1,13 @@
+# ~/.tmuxinator/qpup.yml
+
+name: qpup
+root: ~/qpup_ros_ws/src/qpup_robot
+
+windows:
+  - ros:
+      layout: tiled
+      panes:
+        - roscore
+        - rosrun qpup_bringup bringup_jetson_can.sh  && history -s rostopic echo /qpup/joint_states
+        - history -s roslaunch qpup_bringup demo.launch
+        - history -s rostopic echo /qpup/odrive_states
