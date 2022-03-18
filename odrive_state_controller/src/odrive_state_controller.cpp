@@ -140,7 +140,9 @@ bool OdriveStateController::setAxisStateCallback(odrive_state_msgs::SetAxisState
     return false;
   }
 
-  odrive_axis_state_cmd_[request.joint_name].store(request.axis_state);
+  for (const auto& joint : request.joint_names) {
+    odrive_axis_state_cmd_[joint].store(request.axis_state);
+  }
   return true;
 }
 
@@ -151,7 +153,9 @@ bool OdriveStateController::setControlModeCallback(odrive_state_msgs::SetControl
     return false;
   }
 
-  odrive_control_mode_cmd_[request.joint_name].store(request.control_mode);
+  for (const auto& joint : request.joint_names) {
+    odrive_control_mode_cmd_[joint].store(request.control_mode);
+  }
   return true;
 }
 
@@ -162,7 +166,9 @@ bool OdriveStateController::setInputModeCallback(odrive_state_msgs::SetInputMode
     return false;
   }
 
-  odrive_input_mode_cmd_[request.joint_name].store(request.input_mode);
+  for (const auto& joint : request.joint_names) {
+    odrive_input_mode_cmd_[joint].store(request.input_mode);
+  }
   return true;
 }
 
