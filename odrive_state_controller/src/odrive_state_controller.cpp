@@ -163,6 +163,15 @@ bool OdriveStateController::setAxisStateCallback(odrive_state_msgs::SetAxisState
   for (const auto& joint : request.joint_names) {
     odrive_axis_state_cmd_[joint].store(request.axis_state);
   }
+
+  // If no joints specified, send to all
+  if (request.joint_names.empty()) {
+    ROS_INFO_STREAM_NAMED(logger_, "Sending axis state " << request.axis_state << " to ALL joints!");
+    for (auto&& pair : odrive_axis_state_cmd_) {
+      pair.second.store(request.axis_state);
+    }
+  }
+
   return true;
 }
 
@@ -176,6 +185,15 @@ bool OdriveStateController::setControlModeCallback(odrive_state_msgs::SetControl
   for (const auto& joint : request.joint_names) {
     odrive_control_mode_cmd_[joint].store(request.control_mode);
   }
+
+  // If no joints specified, send to all
+  if (request.joint_names.empty()) {
+    ROS_INFO_STREAM_NAMED(logger_, "Sending control mode " << request.control_mode << " to ALL joints!");
+    for (auto&& pair : odrive_control_mode_cmd_) {
+      pair.second.store(request.control_mode);
+    }
+  }
+
   return true;
 }
 
@@ -189,6 +207,15 @@ bool OdriveStateController::setInputModeCallback(odrive_state_msgs::SetInputMode
   for (const auto& joint : request.joint_names) {
     odrive_input_mode_cmd_[joint].store(request.input_mode);
   }
+
+  // If no joints specified, send to all
+  if (request.joint_names.empty()) {
+    ROS_INFO_STREAM_NAMED(logger_, "Sending input mode " << request.input_mode << " to ALL joints!");
+    for (auto&& pair : odrive_input_mode_cmd_) {
+      pair.second.store(request.input_mode);
+    }
+  }
+
   return true;
 }
 
