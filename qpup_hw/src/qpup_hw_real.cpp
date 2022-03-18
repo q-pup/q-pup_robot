@@ -11,19 +11,30 @@
 namespace qpup_hw {
 
 // clang-format off
+// DISCONNECTED forces passthrough encoder state readback
 const std::unordered_set<std::string> DISCONNECTED_JOINT_LIST{
    "FLS",
-   "FLH",
-   "FLK",
+  //  "FLH",
+  //  "FLK",
    "FRS",
-   "FRH",
-   "FRK",
+  //  "FRH",
+  //  "FRK",
    "RLS",
-   "RLH",
-   "RLK",
+  //  "RLH",
+  //  "RLK",
    "RRS",
-   "RRH",
-   "RRK",
+  //  "RRH",
+  //  "RRK",
+};
+// clang-format on
+
+// clang-format off
+// Zero hold forces zero command
+const std::unordered_set<std::string> ZERO_HOLD_JOINT_LIST{
+   "FLS",
+   "FRS",
+   "RLS",
+   "RRS",
 };
 // clang-format on
 
@@ -195,9 +206,25 @@ void QPUPHWReal::read(const ros::Time & /*time*/, const ros::Duration & /*period
 
 void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*period*/) {
   for (const auto &joint_name : joint_names_) {
-    if (DISCONNECTED_JOINT_LIST.find(joint_name) != DISCONNECTED_JOINT_LIST.end()) {
+
+    // If joint is disabled and not "hold", skip
+    if (DISCONNECTED_JOINT_LIST.find(joint_name) != DISCONNECTED_JOINT_LIST.end() &&
+        ZERO_HOLD_JOINT_LIST.find(joint_name) == ZERO_HOLD_JOINT_LIST.end()) {
       joint_to_actuator_position_interface_.propagate();
       continue;
+    }
+
+    // Reboot Command
+    if (odrive_state_data_[joint_name].reboot) {
+      qpup_odrive_reboot_t reboot_message{};
+
+      if (can_->writeFrame(qpup_utils::QPUP_CAN::getOdriveCANCommandId(odrive_axis_params_[joint_name].can_id,
+                                                                       QPUP_ODRIVE_REBOOT_FRAME_ID),
+                           &reboot_message, 0)) {
+        ROS_INFO_STREAM_NAMED(logger_, "Rebooted Odrive " << joint_name << "!");
+      } else {
+        ROS_ERROR_STREAM_NAMED(logger_, "Failed to write reboot Odrive " << joint_name << ".");
+      }
     }
 
     // Clear Errors Command
@@ -308,6 +335,10 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
           set_input_pos_message.vel_ff = qpup_odrive_set_input_pos_vel_ff_encode(0 / RADIANS_PER_ROTATION);
           set_input_pos_message.torque_ff = qpup_odrive_set_input_pos_torque_ff_encode(0);
 
+          if (ZERO_HOLD_JOINT_LIST.find(joint_name) != ZERO_HOLD_JOINT_LIST.end()) {
+            set_input_pos_message.input_pos = 0;
+          }
+
           // Pack Message
           const int message_size = qpup_odrive_set_input_pos_pack(outgoing_can_data_buffer, &set_input_pos_message,
                                                                   qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC);
@@ -337,6 +368,10 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
               actuator_joint_commands_[joint_name].actuator_data / RADIANS_PER_ROTATION);
           set_input_vel_message.input_torque_ff = qpup_odrive_set_input_vel_input_torque_ff_encode(0);
 
+          if (ZERO_HOLD_JOINT_LIST.find(joint_name) != ZERO_HOLD_JOINT_LIST.end()) {
+            set_input_vel_message.input_vel = 0;
+          }
+
           // Pack Message
           const int message_size = qpup_odrive_set_input_vel_pack(outgoing_can_data_buffer, &set_input_vel_message,
                                                                   qpup_utils::QPUP_CAN::ODRIVE_CMD_WITH_DATA_DLC);
@@ -365,6 +400,10 @@ void QPUPHWReal::write(const ros::Time & /*time*/, const ros::Duration & /*perio
           qpup_odrive_set_input_torque_t set_input_torque_message{};
           set_input_torque_message.input_torque =
               qpup_odrive_set_input_vel_input_vel_encode(actuator_joint_commands_[joint_name].actuator_data);
+
+          if (ZERO_HOLD_JOINT_LIST.find(joint_name) != ZERO_HOLD_JOINT_LIST.end()) {
+            set_input_torque_message.input_torque = 0;
+          }
 
           // Pack Message
           const int message_size = qpup_odrive_set_input_torque_pack(

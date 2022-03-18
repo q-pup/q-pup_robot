@@ -66,6 +66,7 @@ class QPUPHW : public hardware_interface::RobotHW {
     uint16_t input_mode_cmd = odrive_state_msgs::SetInputMode::Request::Type::INPUT_MODE_PASSTHROUGH;
 
     bool clear_errors = false;
+    bool reboot = false;
   };
 
   bool init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) override;

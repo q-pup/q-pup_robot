@@ -13,6 +13,7 @@ add_message_files(
 
 add_service_files(
         FILES
+        ResetOdrive.srv
         SetAxisState.srv
         SetControlMode.srv
         SetInputMode.srv

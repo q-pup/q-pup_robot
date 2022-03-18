@@ -2,6 +2,7 @@
 
 #include "controller_interface/controller.h"
 #include "odrive_state_msgs/OdriveState.h"
+#include "odrive_state_msgs/ResetOdrive.h"
 #include "odrive_state_msgs/SetAxisState.h"
 #include "odrive_state_msgs/SetControlMode.h"
 #include "odrive_state_msgs/SetInputMode.h"
@@ -29,16 +30,20 @@ class OdriveStateController : public controller_interface::Controller<qpup_hw::O
   std::map<std::string, std::atomic<uint16_t>> odrive_input_mode_cmd_;
   std::shared_ptr<realtime_tools::RealtimePublisher<odrive_state_msgs::OdriveState>> realtime_pub_;
   ros::ServiceServer clear_errors_server_;
+  ros::ServiceServer reset_odrive_server_;
   ros::ServiceServer set_axis_state_server_;
   ros::ServiceServer set_control_mode_server_;
   ros::ServiceServer set_input_mode_server_;
 
   std::atomic_flag do_not_clear_errors_flag_ = ATOMIC_FLAG_INIT;
+  std::map<std::string, std::atomic_flag> do_not_reboot_odrive_flag_;
   ros::Time last_publish_time_;
   double publish_rate_;
   unsigned int num_odrive_axis_;
 
   bool clearErrorsCallback(std_srvs::Empty::Request& /* request */, std_srvs::Empty::Response& /*response*/);
+  bool resetOdriveCallback(odrive_state_msgs::ResetOdrive::Request& request,
+                           odrive_state_msgs::ResetOdrive::Response& /* response */);
   bool setAxisStateCallback(odrive_state_msgs::SetAxisState::Request& request,
                             odrive_state_msgs::SetAxisState::Response& /* response */);
   bool setControlModeCallback(odrive_state_msgs::SetControlMode::Request& request,

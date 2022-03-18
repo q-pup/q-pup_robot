@@ -9,6 +9,6 @@ uint16 INPUT_MODE_MIRROR=7
 uint16 INPUT_MODE_TUNING=8
 uint16 INPUT_MODE_INVALID=9
 
-string joint_name
+string[] joint_names
 uint16 input_mode
 ---

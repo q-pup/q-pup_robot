@@ -12,7 +12,7 @@ class OdriveStateHandle {
                     const uint32_t* motor_error, const uint32_t* encoder_error, const uint32_t* sensorless_error,
                     const uint32_t* shadow_count, const uint32_t* count_in_cpr, const float* iq_setpoint,
                     const float* iq_measured, const float* vbus_voltage, uint16_t* axis_state_cmd,
-                    uint8_t* control_mode_cmd, uint16_t* input_mode_cmd, bool* clear_errors)
+                    uint8_t* control_mode_cmd, uint16_t* input_mode_cmd, bool* clear_errors, bool* reboot)
       : name_(name),
         axis_error_(axis_error),
         axis_state_(axis_state),
@@ -32,7 +32,8 @@ class OdriveStateHandle {
         control_mode_cmd_(control_mode_cmd),
         input_mode_cmd_(input_mode_cmd),
 
-        clear_errors_(clear_errors) {}
+        clear_errors_(clear_errors),
+        reboot_(reboot) {}
 
   std::string getName() const {
     return name_;
@@ -91,6 +92,9 @@ class OdriveStateHandle {
   void setClearErrors(bool do_clear_errors) {
     *clear_errors_ = do_clear_errors;
   }
+  void setReboot(bool do_reboot) {
+    *reboot_ = do_reboot;
+  }
 
  private:
   std::string name_;
@@ -118,6 +122,7 @@ class OdriveStateHandle {
   uint16_t* input_mode_cmd_ = {nullptr};
 
   bool* clear_errors_ = {nullptr};
+  bool* reboot_ = {nullptr};
 };
 
 class OdriveStateInterface : public hardware_interface::HardwareResourceManager<OdriveStateHandle> {};

@@ -13,6 +13,6 @@ uint16 AXIS_STATE_ENCODER_HALL_POLARITY_CALIBRATION=12
 uint16 AXIS_STATE_ENCODER_HALL_PHASE_CALIBRATION=13
 uint16 AXIS_STATE_INVALID=14
 
-string joint_name
+string[] joint_names
 uint16 axis_state
 ---
