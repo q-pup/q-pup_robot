@@ -89,6 +89,13 @@ void OdriveStateController::update(const ros::Time& time, const ros::Duration& /
     auto axis_cmd = odrive_axis_state_cmd_[joint_name].load();
     if (axis_cmd != odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_INVALID) {
       odrive_state_[i].setAxisState(axis_cmd);
+      if (odrive_axis_state_cmd_[joint_name] ==
+          odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_CLOSED_LOOP_CONTROL) {
+        odrive_control_mode_cmd_[joint_name].store(
+            odrive_state_msgs::SetControlMode::Request::Type::CONTROL_MODE_POSITION);
+        odrive_input_mode_cmd_[joint_name].store(
+            odrive_state_msgs::SetInputMode::Request::Type::INPUT_MODE_PASSTHROUGH);
+      }
       odrive_axis_state_cmd_[joint_name].store(odrive_state_msgs::SetAxisState::Request::Type::AXIS_STATE_INVALID);
     }
 
