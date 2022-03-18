@@ -1,10 +1,20 @@
 <?xml version="1.0"?>
 <launch>
+    <arg name="camera_name"     default="zed" />
+    <arg name="zed_node_name"   default="zed_node"/>
+
     <include file="$(find qpup_vision)/launch/zed_ar_track.launch">
-        <arg name="camera_name"     value="zed" />
-        <arg name="zed_node_name"   value="zed_node" />
-        <arg name="camera_model"    value="zed" />
+        <arg name="camera_name"     value="$(arg camera_name)"/>
+        <arg name="zed_node_name"   value="$(arg zed_node_name)"/>
+        <arg name="camera_model"    value="zed"/>
     </include>
 
     <node name="tracker" pkg="qpup_vision" type="person_tracker"/>
+
+    <node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan">
+        <param name="scan_height"       value="10"/>
+        <param name="range_min"         value="0.1"/>
+        <param name="output_frame_id"   value="$(arg camera_name)_left_camera_frame"/>
+        <remap from="image"             to="$(arg camera_name)/$(arg zed_node_name)/depth/depth_registered"/>
+    </node>
 </launch>

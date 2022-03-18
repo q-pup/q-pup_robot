@@ -31,6 +31,7 @@
   <depend>tf2_geometry_msgs</depend>
   <depend>tf2_ros</depend>
 
+  <exec_depend>depthimage_to_laserscan</exec_depend>
   <exec_depend>rviz</exec_depend>
   <exec_depend>zed_wrapper</exec_depend>
 </package>
